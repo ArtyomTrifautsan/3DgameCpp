@@ -24,5 +24,8 @@ public:
         const std::string& model_dir_path,
         std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
 
+    Barrier(const std::string& model_name,
+        std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+
 private:
 };

@@ -19,6 +19,8 @@ public:
         const std::string& model_path,
         const std::string& model_dir_path,
         std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    
+    GameObject(const std::string& model_name, std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
 
     std::shared_ptr<AiryEngine::Model3D> get_model() const { return this->model; }
     std::shared_ptr<AiryEngine::CubeCollidingObject> get_colliding_cube() const { return this->colliding_cube; }

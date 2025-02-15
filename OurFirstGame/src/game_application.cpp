@@ -20,6 +20,7 @@ GameApplication::GameApplication(std::shared_ptr<AiryEngine::ResourceManager> _r
 void GameApplication::on_start(std::shared_ptr<AiryEngine::ResourceManager> _resource_manager)
 {
     this->renderer = std::make_shared<AiryEngine::Renderer>(_resource_manager);
+    load_models(_resource_manager);
 
     this->game_round = std::make_shared<GameRound>(_resource_manager);
     this->game_object_renderer = std::make_shared<GameObjectRenderer>(this->renderer, this->camera, _resource_manager);
@@ -152,6 +153,19 @@ void GameApplication::_handle_events()
 }
 
 
+void GameApplication::load_models(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
+{
+    resource_manager->create_collision_cube_model("CubeCollisionModel", "Cube.obj", "CubeCollideModel");
+    resource_manager->create_collision_cube_model("sphereCollisionModel", "sphere.obj", "SphereCollideModel");
+
+    resource_manager->load_model3D("CarModel", "Mashina12.obj", "FunnyRider/SportCar");
+    resource_manager->load_model3D("RoadModel", "WayOne.obj", "FunnyRider/Road");
+    resource_manager->load_model3D("BarrierModel", "Pregrados.obj", "FunnyRider/Pregrados");
+    resource_manager->load_model3D("CoinModel", "Monetka12.obj", "FunnyRider/Coin");
+    resource_manager->load_model3D("FuelCanisterModel", "Kanistra.obj", "FunnyRider/Canister");
+}
+
+
 void GameApplication::_update_light_source_state()
 {
     // this->lamp_model->set_scale(0.1, 0.1, 0.1);
@@ -217,16 +231,21 @@ void GameApplication::on_draw()
     // this->game_round->render_game_objects(this->renderer, this->camera);
 
     this->game_object_renderer->render_car(this->game_round->get_car());
+
+    // this->game_object_renderer->render_square(this->game_round->get_square());
+
+    this->game_object_renderer->render_squares(this->game_round->get_squares());
+
     // this->game_object_renderer->render_road(this->game_round->get_road());
-    this->game_object_renderer->render_roads(this->game_round->get_roads());
+    // this->game_object_renderer->render_roads(this->game_round->get_roads());
 
     // this->game_object_renderer->render_barrier(this->game_round->get_barrier());
-    this->game_object_renderer->render_barriers(this->game_round->get_barriers());
+    // this->game_object_renderer->render_barriers(this->game_round->get_barriers());
 
     // this->game_object_renderer->render_coin(this->game_round->get_coin());
-    this->game_object_renderer->render_coins(this->game_round->get_coins());
+    // this->game_object_renderer->render_coins(this->game_round->get_coins());
 
-    this->game_object_renderer->render_fuel_canister(this->game_round->get_fuel_canister());
+    // this->game_object_renderer->render_fuel_canister(this->game_round->get_fuel_canister());
 }
 
 

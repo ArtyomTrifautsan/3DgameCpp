@@ -17,6 +17,7 @@
 #include "game_objects/barrier.hpp"
 #include "game_objects/coin.hpp"
 #include "game_objects/fuel_canister.hpp"
+#include "square.hpp"
 
 
 // Системные библиотеки
@@ -34,6 +35,9 @@ public:
     bool get_visible_colliding_objects() const { return this->visible_colliding_objects; }
 
     void render_car(std::shared_ptr<Car> car);
+
+    void render_square(std::shared_ptr<Square> square);
+    void render_squares(std::shared_ptr<std::vector<std::shared_ptr<Square>>> squares);
 
     void render_road(std::shared_ptr<Road> road);
     void render_roads(std::shared_ptr<std::vector<std::shared_ptr<Road>>> roads);

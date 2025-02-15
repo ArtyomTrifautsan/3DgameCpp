@@ -29,6 +29,8 @@ public:
     virtual void on_ui_draw() override;
 
 private:
+    void load_models(std::shared_ptr<AiryEngine::ResourceManager> _resource_manager);
+
     void setup_dockspace_menu();
     void setup_light_dockspace();
     void setup_camera_dockspace();

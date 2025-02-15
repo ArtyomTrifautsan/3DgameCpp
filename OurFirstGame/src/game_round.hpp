@@ -29,6 +29,7 @@
 #include "game_objects/barrier.hpp"
 #include "game_objects/coin.hpp"
 #include "game_objects/fuel_canister.hpp"
+#include "square.hpp"
 
 
 // Системные библиотеки
@@ -52,19 +53,45 @@ public:
     void handle_events();
 
     std::shared_ptr<Car> get_car() const { return this->car; }
+
+    std::shared_ptr<std::vector<std::shared_ptr<Square>>> get_squares() const { return this->squares; }
+
     // std::shared_ptr<Road> get_road() const { return this->road; }
-    std::shared_ptr<std::vector<std::shared_ptr<Road>>> get_roads() const { return this->roads; }
+    // std::shared_ptr<std::vector<std::shared_ptr<Road>>> get_roads() const { return this->roads; }
 
     // std::shared_ptr<Barrier> get_barrier() const { return this->barrier; }
-    std::shared_ptr<std::vector<std::shared_ptr<Barrier>>> get_barriers() const { return this->barriers; }
+    // std::shared_ptr<std::vector<std::shared_ptr<Barrier>>> get_barriers() const { return this->barriers; }
 
     // std::shared_ptr<Coin> get_coin() const { return this->coin; }
-    std::shared_ptr<std::vector<std::shared_ptr<Coin>>> get_coins() const { return this->coins; }
-    std::shared_ptr<FuelCanister> get_fuel_canister() const { return this->fuel_canister; }
+    // std::shared_ptr<std::vector<std::shared_ptr<Coin>>> get_coins() const { return this->coins; }
+    // std::shared_ptr<FuelCanister> get_fuel_canister() const { return this->fuel_canister; }
 
 private:
-    void move_back_game_objects();
-    void rotate_coins_and_fuel_canister();
+    void create_car(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    void create_squares(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    std::shared_ptr<Square> create_square_1_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    std::shared_ptr<Square> create_square_2_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    std::shared_ptr<Square> create_square_3_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    std::shared_ptr<Square> create_square_4_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    std::shared_ptr<Square> create_square_5_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    std::shared_ptr<Square> create_square_6_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    std::shared_ptr<Square> create_square_7_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    std::shared_ptr<Square> create_square_8_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    // void create_roads(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    // void create_barriers(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    // void create_coins(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    // void create_fuel_canister(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+
+    void set_car_start_pos();
+    void set_squares_start_pos();
+    // void set_roads_start_pos();
+    // void set_barriers_start_pos();
+    // void set_coins_start_pos();
+    // void set_fuel_canister_pos();
+
+    void move_back_squares();
+    // void rotate_coins_and_fuel_canister();
+
     void drive_car();
 
     void check_collisions();
@@ -72,40 +99,36 @@ private:
     void check_coins_collision();
     void check_fuel_canister_collision();
 
-    void create_car(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    void create_roads(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    void create_barriers(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    void create_coins(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    void create_fuel_canister(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    int get_random_number(int start, int end);
+    
 
-    void set_car_start_pos();
-    void set_roads_start_pos();
-    void set_barriers_start_pos();
-    void set_coins_start_pos();
-    void set_fuel_canister_pos();
-
-    void move_back_roads();
-    void move_back_barriers();
-    void move_back_coins();
-    void move_back_fuel_canister();
+    // void move_back_roads();
+    // void move_back_barriers();
+    // void move_back_coins();
+    // void move_back_fuel_canister();
 
     bool pause = false;
     bool able_to_change_pause = true;
 
     std::shared_ptr<Car> car;
+
+    // std::shared_ptr<Square> square;
+    std::shared_ptr<std::vector<std::shared_ptr<Square>>> squares;
+    int number_of_squares = 0;
+
     // std::shared_ptr<Road> road;
-    int number_of_roads = 10;
-    std::shared_ptr<std::vector<std::shared_ptr<Road>>> roads;
+    // int number_of_roads = 10;
+    // std::shared_ptr<std::vector<std::shared_ptr<Road>>> roads;
 
     // std::shared_ptr<Barrier> barrier;
-    int number_of_barriers = 10;
-    std::shared_ptr<std::vector<std::shared_ptr<Barrier>>> barriers;
+    // int number_of_barriers = 10;
+    // std::shared_ptr<std::vector<std::shared_ptr<Barrier>>> barriers;
 
     // std::shared_ptr<Coin> coin;
-    int number_of_coins = 10;
-    std::shared_ptr<std::vector<std::shared_ptr<Coin>>> coins;
+    // int number_of_coins = 10;
+    // std::shared_ptr<std::vector<std::shared_ptr<Coin>>> coins;
 
-    std::shared_ptr<FuelCanister> fuel_canister;
+    // std::shared_ptr<FuelCanister> fuel_canister;
 
     float road_offset = 4.317f * 2 - 0.1f;
     float game_objects_step = 0.1f;

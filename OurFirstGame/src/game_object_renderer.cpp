@@ -8,8 +8,10 @@ GameObjectRenderer::GameObjectRenderer(std::shared_ptr<AiryEngine::Renderer> ren
     this->renderer = renderer;
     this->camera = camera;
 
-    this->colliding_cube_model3D = resource_manager->create_collision_cube_model("Cube1", "Cube.obj", "CubeCollideModel");
-    this->colliding_sphere_model3D = resource_manager->create_collision_cube_model("sphere", "sphere.obj", "SphereCollideModel");
+    // this->colliding_cube_model3D = resource_manager->create_collision_cube_model("Cube1", "Cube.obj", "CubeCollideModel");
+    this->colliding_cube_model3D = resource_manager->get_model3D("CubeCollisionModel");
+    // this->colliding_sphere_model3D = resource_manager->create_collision_cube_model("sphere", "sphere.obj", "SphereCollideModel");
+    this->colliding_sphere_model3D = resource_manager->get_model3D("sphereCollisionModel");
 
     this->visible_colliding_objects = true;
 }
@@ -34,6 +36,31 @@ void GameObjectRenderer::render_car(std::shared_ptr<Car> car)
     glm::vec3 cube_scale = car->get_colliding_cube()->get_scale();
     this->colliding_cube_model3D->set_scale(cube_scale.x, cube_scale.y, cube_scale.z);
     renderer->render_collision_model(*camera, this->colliding_cube_model3D);
+}
+
+
+void GameObjectRenderer::render_square(std::shared_ptr<Square> square)
+{
+    if (!square->get_visible())
+        return;
+
+    render_road(square->get_road());
+
+    render_barriers(square->get_barriers());
+
+    render_coins(square->get_coins());
+
+    if (square->get_has_fuel_canister())
+        render_fuel_canister(square->get_fuel_canister());
+}
+
+
+void GameObjectRenderer::render_squares(std::shared_ptr<std::vector<std::shared_ptr<Square>>> squares)
+{
+    for (std::shared_ptr<Square> curr_square : *squares)
+    {
+        render_square(curr_square);
+    }
 }
 
 
