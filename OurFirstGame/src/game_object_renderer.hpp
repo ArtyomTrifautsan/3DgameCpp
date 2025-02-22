@@ -49,6 +49,7 @@ public:
     void render_coins(std::shared_ptr<std::vector<std::shared_ptr<Coin>>> coins);
 
     void render_fuel_canister(std::shared_ptr<FuelCanister> fuel_canister);
+    void render_fuel_canisters(std::shared_ptr<std::vector<std::shared_ptr<FuelCanister>>> fuel_canisters);
 
 private:
     std::shared_ptr<AiryEngine::Renderer> renderer;

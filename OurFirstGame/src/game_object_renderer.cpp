@@ -50,8 +50,7 @@ void GameObjectRenderer::render_square(std::shared_ptr<Square> square)
 
     render_coins(square->get_coins());
 
-    if (square->get_has_fuel_canister())
-        render_fuel_canister(square->get_fuel_canister());
+    render_fuel_canisters(square->get_fuel_canisters());
 }
 
 
@@ -176,6 +175,15 @@ void GameObjectRenderer::render_fuel_canister(std::shared_ptr<FuelCanister> fuel
     glm::vec3 cube_scale = fuel_canister->get_colliding_cube()->get_scale();
     this->colliding_cube_model3D->set_scale(cube_scale.x, cube_scale.y, cube_scale.z);
     renderer->render_collision_model(*camera, this->colliding_cube_model3D);
+}
+
+
+void GameObjectRenderer::render_fuel_canisters(std::shared_ptr<std::vector<std::shared_ptr<FuelCanister>>> fuel_canisters)
+{
+    for (std::shared_ptr<FuelCanister> curr_fuel_canister : *fuel_canisters)
+    {
+        render_fuel_canister(curr_fuel_canister);
+    }
 }
 
 

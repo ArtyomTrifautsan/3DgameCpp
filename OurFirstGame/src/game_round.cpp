@@ -12,10 +12,16 @@ GameRound::GameRound(std::shared_ptr<AiryEngine::ResourceManager> resource_manag
 {
     // std::cout << "GameRound::start start" << std::endl;
 
+    create_square_types();
+    // std::cout << "GameRound::start square_types created" << std::endl;
+
     create_car(resource_manager);
+    // std::cout << "GameRound::start car created" << std::endl;
 
     create_squares(resource_manager);
+    // std::cout << "GameRound::start squares created" << std::endl;
     set_squares_start_pos();
+    // std::cout << "GameRound::start start pos of squares defined" << std::endl;
 
     // create_roads(resource_manager);
     
@@ -41,13 +47,16 @@ void GameRound::update_game_round()
         // this->square->move_along_z_axis(this->game_objects_step, this->road_offset, this->number_of_squares);
         // this->square->rotate_coins_and_fuel_canister(this->rotate_delta_angle);
 
+        // std::cout << "GameRound::update_game_round before cycle" << std::endl;
         for (std::shared_ptr<Square> curr_square : *this->squares)
         {
             curr_square->move_along_z_axis(this->game_objects_step, this->road_offset, this->number_of_squares);
+            // std::cout << "GameRound::update_game_round move_along_z_axis" << std::endl;
             curr_square->rotate_coins_and_fuel_canister(this->rotate_delta_angle);
+            // std::cout << "GameRound::update_game_round rotate_coins_and_fuel_canister" << std::endl;
         }
     }
-    
+
     drive_car();
 
     check_collisions();
@@ -86,6 +95,7 @@ void GameRound::create_car(std::shared_ptr<AiryEngine::ResourceManager> resource
     );
 }
 
+
 void GameRound::create_squares(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
 {
     // std::cout << "GameRound::create_squares start" << std::endl;
@@ -94,8 +104,11 @@ void GameRound::create_squares(std::shared_ptr<AiryEngine::ResourceManager> reso
 
     for (int i = 0; i < 5; i++)
     {
-        this->squares->push_back(create_square_1_kind(resource_manager));
-        this->squares->push_back(create_square_2_kind(resource_manager));
+        this->squares->push_back(create_void_square(resource_manager));
+        // std::cout << "GameRound::create_squares create_void_square finish" << std::endl;
+        this->squares->push_back(create_random_square(resource_manager));
+        // std::cout << "GameRound::create_squares create_random_square finish" << std::endl;
+        // this->squares->push_back(create_square_2_kind(resource_manager));
         // this->squares->push_back(create_square_3_kind(resource_manager));
     }
 
@@ -121,165 +134,17 @@ void GameRound::set_squares_start_pos()
 }
 
 
-std::shared_ptr<Square> GameRound::create_square_1_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
+std::shared_ptr<Square> GameRound::create_void_square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
 {
     std::vector<std::pair<float, float>> barrier_coords;
 
     std::vector<std::pair<float, float>> coin_coords;
 
-    std::shared_ptr<Square> curr_square = std::make_shared<Square>(
-        resource_manager,
-        barrier_coords,
-        coin_coords
-    );
-
-    // if (curr_square->get_has_fuel_canister())
-    //     std::cout << "yes Fuel canister" << std::endl;
-    // else
-    //     std::cout << "no Fuel canister" << std::endl;
-
-    this->number_of_squares += 1;
-
-    return curr_square;
-}
-
-
-std::shared_ptr<Square> GameRound::create_square_2_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
-{
-    std::vector<std::pair<float, float>> barrier_coords;
-    std::vector<std::pair<float, float>> coin_coords;
-    int random_number;
-
-    std::pair<float, float> left_pos;
-    left_pos.first = 2;
-    left_pos.second = 0;
-    random_number = get_random_number(1, 100);
-    if (random_number < 10)
-    {
-        
-    }
-    else if (random_number < 40)
-    {
-        barrier_coords.push_back(left_pos);
-    }
-    else
-    {
-        coin_coords.push_back(left_pos);
-    }
-
-    std::pair<float, float> center_pos;
-    center_pos.first = 0;
-    center_pos.second = 0;
-    random_number = get_random_number(1, 100);
-    if (random_number < 10)
-    {
-        
-    }
-    else if (random_number < 40)
-    {
-        barrier_coords.push_back(center_pos);
-    }
-    else
-    {
-        coin_coords.push_back(center_pos);
-    }
-    
-    std::pair<float, float> right_pos;
-    right_pos.first = -2;
-    right_pos.second = 0;
-    random_number = get_random_number(1, 100);
-    if (random_number < 10)
-    {
-        
-    }
-    else if (random_number < 40)
-    {
-        barrier_coords.push_back(right_pos);
-    }
-    else
-    {
-        coin_coords.push_back(right_pos);
-    }
-
-    
+    std::vector<std::pair<float, float>> fuel_canister_coords;
 
     std::shared_ptr<Square> curr_square = std::make_shared<Square>(
         resource_manager,
-        barrier_coords,
-        coin_coords
-    );
-
-    // if (curr_square->get_has_fuel_canister())
-    //     std::cout << "yes Fuel canister" << std::endl;
-    // else
-    //     std::cout << "no Fuel canister" << std::endl;
-
-    this->number_of_squares += 1;
-
-    return curr_square;
-}
-
-
-std::shared_ptr<Square> GameRound::create_square_3_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
-{
-    std::vector<std::pair<float, float>> barrier_coords;
-    std::pair<float, float> aux_pair;
-
-    // barrier_coords.push_back(std::pair<float, float>(0, 0));
-    aux_pair.first = 0;
-    aux_pair.second = 0;
-    barrier_coords.push_back(aux_pair);
-
-    aux_pair.first = 2;
-    aux_pair.second = 0;
-    barrier_coords.push_back(aux_pair);
-
-    std::vector<std::pair<float, float>> coin_coords;
-    // coin_coords.push_back(std::pair<float, float>(-2, 0));
-    aux_pair.first = -2;
-    aux_pair.second = 0;
-    coin_coords.push_back(aux_pair);
-
-    std::shared_ptr<Square> curr_square = std::make_shared<Square>(
-        resource_manager,
-        barrier_coords,
-        coin_coords
-    );
-
-    // if (curr_square->get_has_fuel_canister())
-    //     std::cout << "yes Fuel canister" << std::endl;
-    // else
-    //     std::cout << "no Fuel canister" << std::endl;
-
-    this->number_of_squares += 1;
-
-    return curr_square;
-}
-
-
-std::shared_ptr<Square> GameRound::create_square_8_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
-{
-    std::vector<std::pair<float, float>> barrier_coords;
-    std::pair<float, float> aux_pair;
-
-    // barrier_coords.push_back(std::pair<float, float>(0, 0));
-    aux_pair.first = 0;
-    aux_pair.second = 0;
-    barrier_coords.push_back(aux_pair);
-
-    std::vector<std::pair<float, float>> coin_coords;
-    // coin_coords.push_back(std::pair<float, float>(-2, 0));
-    aux_pair.first = -2;
-    aux_pair.second = 0;
-    coin_coords.push_back(aux_pair);
-
-    std::pair<float, float> fuel_canister_coords;
-    // fuel_canister_coords = std::pair<float, float>(2, 0);
-    fuel_canister_coords.first = 2;
-    fuel_canister_coords.second = 0;
-
-    std::shared_ptr<Square> curr_square = std::make_shared<Square>(
-        resource_manager,
+        this->square_types,
         barrier_coords,
         coin_coords,
         fuel_canister_coords
@@ -289,6 +154,19 @@ std::shared_ptr<Square> GameRound::create_square_8_kind(std::shared_ptr<AiryEngi
     //     std::cout << "yes Fuel canister" << std::endl;
     // else
     //     std::cout << "no Fuel canister" << std::endl;
+
+    this->number_of_squares += 1;
+
+    return curr_square;
+}
+
+
+std::shared_ptr<Square> GameRound::create_random_square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
+{
+    std::shared_ptr<Square> curr_square = std::make_shared<Square>(
+        resource_manager,
+        this->square_types
+    );
 
     this->number_of_squares += 1;
 
@@ -596,6 +474,49 @@ void GameRound::drive_car()
 }
 
 
+void GameRound::create_square_types()
+{
+    /*
+    n - ничего (пустота)
+    c - монетка
+    b - барьер
+    k - канистра
+    */
+
+    this->square_types = std::make_shared<std::vector<std::string>>();
+
+    // С канистрой 
+    this->square_types->push_back("bkb");
+    this->square_types->push_back("kbb");
+    this->square_types->push_back("bbk");
+
+    // С монетками
+    this->square_types->push_back("bcb");
+    this->square_types->push_back("cbb");
+    this->square_types->push_back("bbc");
+
+    this->square_types->push_back("bcc");
+    this->square_types->push_back("ccb");
+
+    this->square_types->push_back("bcn");
+    this->square_types->push_back("ncb");
+
+    this->square_types->push_back("cbn");
+    this->square_types->push_back("nbc");
+
+    this->square_types->push_back("ccc");
+
+    // С пустотой
+    this->square_types->push_back("bnb");
+    this->square_types->push_back("nbb");
+    this->square_types->push_back("bbn");
+
+    this->square_types->push_back("nbn");
+
+    this->square_types->push_back("nnn");
+}
+
+
 void GameRound::check_collisions()
 {
     std::shared_ptr<AiryEngine::CubeCollidingObject> car_coll_cube = this->car->get_colliding_cube();
@@ -678,27 +599,11 @@ void GameRound::check_fuel_canister_collision()
 {
     std::shared_ptr<AiryEngine::CubeCollidingObject> car_coll_cube = this->car->get_colliding_cube();
 
-    // for (int i = 0; i < this->squares->size(); i++)
-    // {
-    //     if ((*this->squares)[i]->get_has_fuel_canister())
-    //         std::cout << "yes Fuel canister" << std::endl;
-    //     else
-    //         std::cout << "no Fuel canister" << std::endl;
-    // }
-
     for (std::shared_ptr<Square> curr_square : *this->squares)
     {
-        // if (!curr_square->get_has_fuel_canister())
-        // {
-        //     // std::cout << "no Fuel canister" << std::endl;
-        //     return;
-        // }
-
-        // std::cout << "yes Fuel canister" << std::endl;
-
-        if (curr_square->get_has_fuel_canister())
+        for (std::shared_ptr<FuelCanister> fuel_canister : *(curr_square->get_fuel_canisters()))
         {
-            std::shared_ptr<AiryEngine::CubeCollidingObject> fuel_canister_coll_cube = curr_square->get_fuel_canister()->get_colliding_cube();
+            std::shared_ptr<AiryEngine::CubeCollidingObject> fuel_canister_coll_cube = fuel_canister->get_colliding_cube();
             fuel_canister_coll_cube->set_is_collided(false);
 
             if (AiryEngine::CollisionDetector::cube_cube_collision(*car_coll_cube, *fuel_canister_coll_cube))
@@ -722,10 +627,4 @@ void GameRound::check_fuel_canister_collision()
     //     car_coll_cube->set_is_collided(true);
     //     fuel_canister_coll_cube->set_is_collided(true);
     // }
-}
-
-
-int GameRound::get_random_number(int start, int end)
-{
-    return (rand() % (end - start + 1) + start);
 }

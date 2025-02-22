@@ -4,10 +4,49 @@
 #include <iostream>
 
 
+Square::Square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
+                std::shared_ptr<std::vector<std::string>> square_types)
+{
+    // create_square_types();
+
+    std::vector<std::pair<float, float>> barriers_coords;
+    std::vector<std::pair<float, float>> coins_coords;
+    std::vector<std::pair<float, float>> fuel_canisters_coords;
+
+    generate_random_coords(square_types, &barriers_coords, &coins_coords, &fuel_canisters_coords);
+
+    create_road(resource_manager);
+
+    create_barriers(resource_manager, barriers_coords);
+
+    create_coins(resource_manager, coins_coords);
+
+    create_fuel_canisters(resource_manager, fuel_canisters_coords);
+}
+
+// Square::Square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
+//                 const std::vector<std::pair<float, float>> barriers_coords, 
+//                 const std::vector<std::pair<float, float>> coins_coords)
+// {
+//     // std::cout << "Square::Square start" << std::endl;
+
+//     create_road(resource_manager);
+
+//     create_barriers(resource_manager, barriers_coords);
+
+//     create_coins(resource_manager, coins_coords);
+
+//     this->has_fuel_canister = false;
+
+//     // std::cout << "Square::Square finish" << std::endl;
+// }
+
 
 Square::Square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
-                const std::vector<std::pair<float, float>> barriers_coords, 
-                const std::vector<std::pair<float, float>> coins_coords)
+            std::shared_ptr<std::vector<std::string>> square_types,
+            const std::vector<std::pair<float, float>> barriers_coords, 
+            const std::vector<std::pair<float, float>> coins_coords,
+            const std::vector<std::pair<float, float>> fuel_canisters_coords)
 {
     // std::cout << "Square::Square start" << std::endl;
 
@@ -17,30 +56,62 @@ Square::Square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
 
     create_coins(resource_manager, coins_coords);
 
-    this->has_fuel_canister = false;
+    create_fuel_canisters(resource_manager, fuel_canisters_coords);
+
+    // this->has_fuel_canister = true;
 
     // std::cout << "Square::Square finish" << std::endl;
 }
 
 
-Square::Square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
-            const std::vector<std::pair<float, float>> barriers_coords, 
-            const std::vector<std::pair<float, float>> coins_coords,
-            std::pair<float, float> fuel_canister_coords)
+std::string Square::get_random_square_type(std::shared_ptr<std::vector<std::string>> square_types)
 {
-    // std::cout << "Square::Square start" << std::endl;
+    return (*square_types)[get_random_number(0, square_types->size() - 1)];
+}
 
-    create_road(resource_manager);
 
-    create_barriers(resource_manager, barriers_coords);
+int Square::get_random_number(int start, int end)
+{
+    return (rand() % (end - start + 1) + start);
+}
 
-    create_coins(resource_manager, coins_coords);
 
-    create_fuel_canister(resource_manager, fuel_canister_coords);
+void Square::generate_random_coords(std::shared_ptr<std::vector<std::string>> square_types,
+                                std::vector<std::pair<float, float>>* barrier_coords,
+                                std::vector<std::pair<float, float>>* coins_coords,
+                                std::vector<std::pair<float, float>>* fuel_canisters_coords)
+{
+    std::string square_type = get_random_square_type(square_types);
 
-    this->has_fuel_canister = true;
+    std::pair<float, float> left_pos;
+    left_pos.first = 2;
+    left_pos.second = 0;
+    if ('c' == square_type[0])
+        coins_coords->push_back(left_pos);
+    else if ('b' == square_type[0])
+        barrier_coords->push_back(left_pos);
+    else if ('k' == square_type[0])
+        fuel_canisters_coords->push_back(left_pos);
 
-    // std::cout << "Square::Square finish" << std::endl;
+    std::pair<float, float> center_pos;
+    center_pos.first = 0;
+    center_pos.second = 0;
+    if ('c' == square_type[1])
+        coins_coords->push_back(center_pos);
+    else if ('b' == square_type[1])
+        barrier_coords->push_back(center_pos);
+    else if ('k' == square_type[1])
+        fuel_canisters_coords->push_back(center_pos);
+
+    std::pair<float, float> right_pos;
+    right_pos.first = -2;
+    right_pos.second = 0;
+    if ('c' == square_type[2])
+        coins_coords->push_back(right_pos);
+    else if ('b' == square_type[2])
+        barrier_coords->push_back(right_pos);
+    else if ('k' == square_type[2])
+        fuel_canisters_coords->push_back(right_pos);
 }
 
 
@@ -95,19 +166,49 @@ void Square::create_coins(std::shared_ptr<AiryEngine::ResourceManager> resource_
         this->coins->push_back(curr_coin);
     }
 
+    for (int i = 0; i < this->coins->size(); i++)
+    {
+        glm::vec3 rot = (*this->coins)[i]->get_rotate();
+        (*this->coins)[i]->set_rotate(
+            rot.x, 
+            rot.y + i * 25.0f,  
+            rot.z
+        );
+    }
+
     // std::cout << "Coins has been created" << std::endl;
 }
 
 
-void Square::create_fuel_canister(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
-                            std::pair<float, float> fuel_canister_coords)
+void Square::create_fuel_canisters(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
+                            const std::vector<std::pair<float, float>> fuel_canisters_coords)
 {
-    this->fuel_canister = std::make_shared<FuelCanister>(
+    // this->fuel_canister = std::make_shared<FuelCanister>(
+    //         "FuelCanisterModel",
+    //         resource_manager
+    //     );
+    // this->fuel_canister->set_position(fuel_canister_coords.first, fuel_canister_coords.second, 0);
+    // this->has_fuel_canister = true;
+
+    this->fuel_canisters = std::make_shared<std::vector<std::shared_ptr<FuelCanister>>>();
+    for (std::pair<float, float> coords : fuel_canisters_coords)
+    {
+        // std::cout << "Coin coords = (" << coords.first << ", " << coords.second << ")" <<std::endl;
+
+        std::shared_ptr<FuelCanister> curr_fuel_canister = std::make_shared<FuelCanister>(
             "FuelCanisterModel",
             resource_manager
         );
-    this->fuel_canister->set_position(fuel_canister_coords.first, fuel_canister_coords.second, 0);
-    this->has_fuel_canister = true;
+        // fuel_canister->set_position(fuel_canister_coords.first, fuel_canister_coords.second, 0);
+
+        // std::shared_ptr<Coin> curr_coin = std::make_shared<Coin>(
+        //     "CoinModel",
+        //     resource_manager
+        // );
+        curr_fuel_canister->set_position(coords.first, coords.second, 0);
+
+        this->fuel_canisters->push_back(curr_fuel_canister);
+    }
 
     // std::cout << "Fuel canister has been created" << std::endl;
 }
@@ -196,24 +297,24 @@ void Square::move_along_z_axis_coins(float step, float offset, float number_of_r
 
 void Square::move_along_z_axis_fuel_canister(float step, float offset, float number_of_roads)
 {
-    if (!has_fuel_canister)
-        return;
-    
-    glm::vec3 pos = this->fuel_canister->get_position();
-    this->fuel_canister->set_position(
-        pos.x, 
-        pos.y, 
-        pos.z - step
-    );
-
-    pos = this->fuel_canister->get_position();
-    if (pos.z < -offset)
+    for (int i = 0; i < this->fuel_canisters->size(); i++)
     {
-        this->fuel_canister->set_position(
+        glm::vec3 pos = (*this->fuel_canisters)[i]->get_position();
+        (*this->fuel_canisters)[i]->set_position(
             pos.x, 
             pos.y, 
-            pos.z + offset * number_of_roads
+            pos.z - step
         );
+
+        pos = (*this->fuel_canisters)[i]->get_position();
+        if (pos.z < -offset)
+        {
+            (*this->fuel_canisters)[i]->set_position(
+                pos.x, 
+                pos.y, 
+                pos.z + offset * number_of_roads
+            );
+        }
     }
 }
 
@@ -232,15 +333,16 @@ void Square::rotate_coins_and_fuel_canister(float rotate_delta_angle)
         );
     }
 
-    if (!this->has_fuel_canister)
-        return;
-
-    glm::vec3 fuel_canister_rotate = this->fuel_canister->get_rotate();
-    float delta_angle_y = fuel_canister_rotate.y + rotate_delta_angle;
-    if (delta_angle_y > 360) delta_angle_y -= 360;
-    this->fuel_canister->set_rotate(
-        fuel_canister_rotate.x, 
-        delta_angle_y,
-        fuel_canister_rotate.z
-    );
+    for (int i = 0; i < this->fuel_canisters->size(); i++)
+    {
+        glm::vec3 fuel_canister_rotate = (*this->fuel_canisters)[i]->get_rotate();
+        float delta_angle_y = fuel_canister_rotate.y + rotate_delta_angle;
+        if (delta_angle_y > 360) delta_angle_y -= 360;
+        (*this->fuel_canisters)[i]->set_rotate(
+            fuel_canister_rotate.x, 
+            delta_angle_y,
+            fuel_canister_rotate.z
+        );
+    }
 }
+
