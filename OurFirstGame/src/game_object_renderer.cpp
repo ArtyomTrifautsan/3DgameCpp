@@ -8,9 +8,7 @@ GameObjectRenderer::GameObjectRenderer(std::shared_ptr<AiryEngine::Renderer> ren
     this->renderer = renderer;
     this->camera = camera;
 
-    // this->colliding_cube_model3D = resource_manager->create_collision_cube_model("Cube1", "Cube.obj", "CubeCollideModel");
     this->colliding_cube_model3D = resource_manager->get_model3D("CubeCollisionModel");
-    // this->colliding_sphere_model3D = resource_manager->create_collision_cube_model("sphere", "sphere.obj", "SphereCollideModel");
     this->colliding_sphere_model3D = resource_manager->get_model3D("sphereCollisionModel");
 
     this->visible_colliding_objects = true;

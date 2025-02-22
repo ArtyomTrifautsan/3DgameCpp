@@ -175,77 +175,15 @@ void GameApplication::_update_light_source_state()
 
 void GameApplication::_detect_collisions()
 {
-    // this->cube_1_colliding_object->set_is_collided(false);
-    // this->cube_2_colliding_object->set_is_collided(false);
-    // this->sphere_1_colliding_object->set_is_collided(false);
-    // this->sphere_2_colliding_object->set_is_collided(false);
-
-    // if (AiryEngine::CollisionDetector::cube_cube_collision(*this->cube_1_colliding_object, *this->cube_2_colliding_object))
-    // {
-    //     this->cube_1_colliding_object->set_is_collided(true);
-    //     this->cube_2_colliding_object->set_is_collided(true);
-    // }
-
-    // if (AiryEngine::CollisionDetector::sphere_sphere_collision(*this->sphere_1_colliding_object, *this->sphere_2_colliding_object))
-    // {
-    //     this->sphere_1_colliding_object->set_is_collided(true);
-    //     this->sphere_2_colliding_object->set_is_collided(true);
-    // }
-
-    // if (AiryEngine::CollisionDetector::cube_sphere_collision(*this->cube_1, *this->sphere_1))
-    // {
-    //     this->cube_1->set_is_collided(true);
-    //     this->sphere_1->set_is_collided(true);
-    // }
-
-    // if (AiryEngine::CollisionDetector::cube_sphere_collision(*this->cube_1, *this->sphere_2))
-    // {
-    //     this->cube_1->set_is_collided(true);
-    //     this->sphere_2->set_is_collided(true);
-    // }
-
-    // if (AiryEngine::CollisionDetector::cube_sphere_collision(*this->cube_2, *this->sphere_1))
-    // {
-    //     this->cube_2->set_is_collided(true);
-    //     this->sphere_1->set_is_collided(true);
-    // }
-
-    // if (this->cube_1_colliding_object->get_is_collided()) collision_cube_model_1->set_diffuse_color(1, 0, 0);
-    // else collision_cube_model_1->set_diffuse_color(0, 1, 0);
-
-    // if (this->cube_2->get_is_collided()) collision_cube_model_2->set_diffuse_color(1, 0, 0);
-    // else collision_cube_model_2->set_diffuse_color(0, 1, 0);
-
-    // if (this->sphere_1->get_is_collided()) collision_sphere_model_1->set_diffuse_color(1, 0, 0);
-    // else collision_sphere_model_1->set_diffuse_color(0, 1, 0);
-
-    // if (this->sphere_2->get_is_collided()) collision_sphere_model_2->set_diffuse_color(1, 0, 0);
-    // else collision_sphere_model_2->set_diffuse_color(0, 1, 0);
+    
 }
 
 
 void GameApplication::on_draw()
 {
-    // this->renderer->render_model3D(camera, this->lamp_model);
-
-    // this->game_round->render_game_objects(this->renderer, this->camera);
-
     this->game_object_renderer->render_car(this->game_round->get_car());
 
-    // this->game_object_renderer->render_square(this->game_round->get_square());
-
     this->game_object_renderer->render_squares(this->game_round->get_squares());
-
-    // this->game_object_renderer->render_road(this->game_round->get_road());
-    // this->game_object_renderer->render_roads(this->game_round->get_roads());
-
-    // this->game_object_renderer->render_barrier(this->game_round->get_barrier());
-    // this->game_object_renderer->render_barriers(this->game_round->get_barriers());
-
-    // this->game_object_renderer->render_coin(this->game_round->get_coin());
-    // this->game_object_renderer->render_coins(this->game_round->get_coins());
-
-    // this->game_object_renderer->render_fuel_canister(this->game_round->get_fuel_canister());
 }
 
 

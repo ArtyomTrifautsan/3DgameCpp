@@ -33,9 +33,6 @@ public:
     void handle_events();
 
     void update_moving_state();
-    
-    // bool go_right();
-    // bool go_left();
 
 private:
     void lateral_move(float step);
@@ -57,12 +54,3 @@ private:
     float lateral_rotate_per_frame = lateral_rotate_speed / AiryEngine::FpsKeeper::get_fps();  // Поворот за кадр
     float lateral_rotate_direction = 0;     // 1 - в направлении поворота, -1 - обратно, 0 - не вращаемся
 };
-
-
-
-/*
-steps_per_frame = Steps/Frames - ?
-Steps/Seconds = lateral_speed   => Steps = lateral_speed * seconds
-Frames/Seconds = FPS    => Frames = FPS * seconds
-=> steps_per_frame = lateral_speed / FPS
-*/

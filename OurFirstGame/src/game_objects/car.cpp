@@ -96,13 +96,6 @@ void Car::lateral_move(float step)
 
 void Car::lateral_rotate(float angle_step)
 {
-    // Поворот машины
-    // std::cout << "Повороты." << std::endl;
-    // std::cout << "lateral_rotate_angle: " << this->lateral_rotate_angle << std::endl;
-    // std::cout << "current_lateral_rotate_angle: " << this->current_lateral_rotate_angle << std::endl;
-    // std::cout << "lateral_rotate_per_frame: " << this->lateral_rotate_per_frame << std::endl;
-    // std::cout << "lateral_rotate_direction: " << this->lateral_rotate_direction << std::endl;
-
     glm::vec3 rot = get_rotate();
     set_rotate(
         rot.x,

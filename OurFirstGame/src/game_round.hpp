@@ -63,20 +63,6 @@ private:
 
     std::shared_ptr<Square> create_void_square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
     std::shared_ptr<Square> create_random_square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_3_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_4_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_5_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_6_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_7_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_8_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_9_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_10_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_11_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_12_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_13_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_14_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_15_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    // std::shared_ptr<Square> create_square_16_kind(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
 
     void set_car_start_pos();
     void set_squares_start_pos();

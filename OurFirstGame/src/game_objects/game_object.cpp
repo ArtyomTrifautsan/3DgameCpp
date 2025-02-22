@@ -9,8 +9,6 @@ GameObject::GameObject(const std::string& model_name,
     const std::string& model_path_to_file,
     std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
 {
-    // std::cout << "GameObject::GameObject start" << std::endl;
-
     this->model = resource_manager->load_model3D(model_name, model_filename, model_path_to_file);;
     this->colliding_cube = std::make_shared<AiryEngine::CubeCollidingObject>();
 
@@ -54,17 +52,11 @@ GameObject::GameObject(const std::string& model_name,
     this->rotate = glm::vec3(0, 0, 0);
 
     this->visible = true;
-
-    // std::cout << "GameObject::GameObject finish" << std::endl;
 }
 
 
 GameObject::GameObject(const std::string& model_name, std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
 {
-    // std::cout << "GameObject::GameObject start" << std::endl;
-
-    // std::cout << "start creating the road" << std::endl;
-    // this->model = resource_manager->load_model3D(model_name, model_filename, model_path_to_file);;
     this->model = resource_manager->get_model3D(model_name);
     this->colliding_cube = std::make_shared<AiryEngine::CubeCollidingObject>();
 
@@ -108,8 +100,6 @@ GameObject::GameObject(const std::string& model_name, std::shared_ptr<AiryEngine
     this->rotate = glm::vec3(0, 0, 0);
 
     this->visible = true;
-
-    // std::cout << "GameObject::GameObject finish" << std::endl;
 }
 
 
