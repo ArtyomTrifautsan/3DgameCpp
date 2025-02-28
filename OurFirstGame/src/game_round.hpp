@@ -31,6 +31,7 @@
 #include "game_objects/coin.hpp"
 #include "game_objects/fuel_canister.hpp"
 #include "square.hpp"
+#include "square_templates_definer.hpp"
 
 
 // Системные библиотеки
@@ -58,40 +59,38 @@ public:
     std::shared_ptr<std::vector<std::shared_ptr<Square>>> get_squares() const { return this->squares; }
 
 private:
+    // Create game objects
     void create_car(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    void create_squares(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    void create_start_squares(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
 
-    std::shared_ptr<Square> create_void_square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
-    std::shared_ptr<Square> create_random_square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
+    std::shared_ptr<AiryEngine::ResourceManager> resource_manager;
+    std::shared_ptr<Car> car;
+    std::shared_ptr<std::vector<std::shared_ptr<Square>>> squares;
+    const int number_of_squares = 10;
+    std::shared_ptr<SquareTemplateDefender> square_template_defender;
 
+    // Set start pos of game objects
     void set_car_start_pos();
-    void set_squares_start_pos();
+    // void set_squares_start_pos();
+    void place_start_squares();
 
-    void move_back_squares();
 
+    // Updating game objects' states during the mainloop of the game
     void drive_car();
+    void move_back_squares();
+    float road_offset = 4.317f * 2 - 0.1f;
+    float game_objects_step = 0.17f;
+    float rotate_delta_angle = 1.0f;
 
+
+    // Checking collisions
     void check_collisions();
     void check_barrier_collision();
     void check_coins_collision();
-    void check_fuel_canister_collision();
-
-    void create_square_types();
-    // bool square_types = false;
+    void check_fuel_canister_collision();    
 
 
-    std::shared_ptr<Car> car;
-
-    std::shared_ptr<std::vector<std::shared_ptr<Square>>> squares;
-    int number_of_squares = 0;
-
+    // Other
     bool pause = false;
     bool able_to_change_pause = true;
-
-    float road_offset = 4.317f * 2 - 0.1f;
-    float game_objects_step = 0.17f;
-
-    float rotate_delta_angle = 1.0f;
-
-    std::shared_ptr<std::vector<std::string>> square_types;
 };

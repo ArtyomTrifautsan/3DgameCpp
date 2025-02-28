@@ -40,61 +40,50 @@ Square содержит:
 
 class Square {
 public:
-    Square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager, 
-            std::shared_ptr<std::vector<std::string>> square_types);
+    // Квадрат без объектов
+    Square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);      
 
-    // Square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
-    //         const std::vector<std::pair<float, float>> barriers_coords, 
-    //         const std::vector<std::pair<float, float>> coins_coords);
-    
-    Square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
-            std::shared_ptr<std::vector<std::string>> square_types,
-            const std::vector<std::pair<float, float>> barriers_coords, 
-            const std::vector<std::pair<float, float>> coins_coords,
-            const std::vector<std::pair<float, float>> fuel_canisters_coords);
+    // Квадрат определенного типа
+    Square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager, std::string square_template);
+
+    std::shared_ptr<Road> get_road() const { return this->road; }
+    std::shared_ptr<std::vector<std::shared_ptr<Barrier>>> get_barriers() const { return this->barriers; }
+    std::shared_ptr<std::vector<std::shared_ptr<Coin>>> get_coins() const { return this->coins; }
+    std::shared_ptr<std::vector<std::shared_ptr<FuelCanister>>> get_fuel_canisters() const { return this->fuel_canisters; }
+
+    int get_number_of_barriers() const { return this->number_of_barriers; }
+    int get_number_of_coins() const { return this->number_of_coins; }
+    int get_number_of_fuel_canisters() const { return this->number_of_fuel_canisters; }
 
     void move_along_z_axis(float step, float offset, float number_of_roads);
 
-    void rotate_coins_and_fuel_canister(float rotate_delta_angle);
-
-
-    std::shared_ptr<Road> get_road() const { return this->road; }
-
-    std::shared_ptr<std::vector<std::shared_ptr<Barrier>>> get_barriers() const { return this->barriers; }
-    int get_number_of_barriers() const { return this->number_of_barriers; }
-
-    std::shared_ptr<std::vector<std::shared_ptr<Coin>>> get_coins() const { return this->coins; }
-    int get_number_of_coins() const { return this->number_of_coins; }
-
-    // std::shared_ptr<FuelCanister> get_fuel_canister() const { return this->fuel_canister; }
-    std::shared_ptr<std::vector<std::shared_ptr<FuelCanister>>> get_fuel_canisters() const { return this->fuel_canisters; }
-    // bool get_has_fuel_canister() const { return this->has_fuel_canister; }
+    void rotate_coins_and_fuel_canisters(float rotate_delta_angle);
 
     bool get_visible() const { return this->visible; }
 
+    bool is_out_of_visible_area(float road_offset);
+
 private:
+    void generate_coords_by_template(std::string square_template,
+                                    std::vector<std::pair<float, float>>* barrier_coords,
+                                    std::vector<std::pair<float, float>>* coins_coords,
+                                    std::vector<std::pair<float, float>>* fuel_canisters_coords);
+
     void create_road(std::shared_ptr<AiryEngine::ResourceManager> resource_manager);
     void create_barriers(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
-                            const std::vector<std::pair<float, float>> barriers_coords);
+                            const std::vector<std::pair<float, float>>& barriers_coords);
     void create_coins(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
-                        const std::vector<std::pair<float, float>> coins_coords);
+                        const std::vector<std::pair<float, float>>& coins_coords);
     void create_fuel_canisters(std::shared_ptr<AiryEngine::ResourceManager> resource_manager,
-                                const std::vector<std::pair<float, float>> fuel_canisters_coords);
-
-    void generate_random_coords(std::shared_ptr<std::vector<std::string>> square_types,
-                                std::vector<std::pair<float, float>>* barrier_coords,
-                                std::vector<std::pair<float, float>>* coins_coords,
-                                std::vector<std::pair<float, float>>* fuel_canisters_coords);
+                                const std::vector<std::pair<float, float>>& fuel_canisters_coords);
 
     void move_along_z_axis_road(float step, float offset, float number_of_roads);
     void move_along_z_axis_barriers(float step, float offset, float number_of_roads);
     void move_along_z_axis_coins(float step, float offset, float number_of_roads);
-    void move_along_z_axis_fuel_canister(float step, float offset, float number_of_roads);
+    void move_along_z_axis_fuel_canisters(float step, float offset, float number_of_roads);
 
-    
-    std::string get_random_square_type(std::shared_ptr<std::vector<std::string>> square_types);
 
-    int get_random_number(int start, int end);
+    float z_position = 0;
 
     std::shared_ptr<Road> road;
 
@@ -104,9 +93,8 @@ private:
     std::shared_ptr<std::vector<std::shared_ptr<Coin>>> coins;
     int number_of_coins = 0;
 
-    // std::shared_ptr<FuelCanister> fuel_canister;
     std::shared_ptr<std::vector<std::shared_ptr<FuelCanister>>> fuel_canisters;
+    int number_of_fuel_canisters = 0;
 
-    // bool has_fuel_canister;
     bool visible = true;
 };

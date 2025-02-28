@@ -11,17 +11,14 @@
 GameRound::GameRound(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
 {
     // std::cout << "GameRound::start start" << std::endl;
-
-    create_square_types();
-    // std::cout << "GameRound::start square_types created" << std::endl;
+    this->resource_manager = resource_manager;
 
     create_car(resource_manager);
-    // std::cout << "GameRound::start car created" << std::endl;
+    set_car_start_pos();
 
-    create_squares(resource_manager);
-    // std::cout << "GameRound::start squares created" << std::endl;
-    set_squares_start_pos();
-    // std::cout << "GameRound::start start pos of squares defined" << std::endl;
+    this->square_template_defender = std::make_shared<SquareTemplateDefender>();
+    create_start_squares(resource_manager);
+    place_start_squares();
 
     // std::cout << "GameRound::start finish" << std::endl;
 }
@@ -33,13 +30,24 @@ void GameRound::update_game_round()
 
     if (!this->pause)
     {
-        // std::cout << "GameRound::update_game_round before cycle" << std::endl;
-        for (std::shared_ptr<Square> curr_square : *this->squares)
+        for (int i = 0; i < this->squares->size(); i++)
         {
-            curr_square->move_along_z_axis(this->game_objects_step, this->road_offset, this->number_of_squares);
-            // std::cout << "GameRound::update_game_round move_along_z_axis" << std::endl;
-            curr_square->rotate_coins_and_fuel_canister(this->rotate_delta_angle);
-            // std::cout << "GameRound::update_game_round rotate_coins_and_fuel_canister" << std::endl;
+            (*this->squares)[i]->move_along_z_axis(this->game_objects_step, this->road_offset, this->number_of_squares);
+            (*this->squares)[i]->rotate_coins_and_fuel_canisters(this->rotate_delta_angle);
+
+            // Если квадрат ушел за пределы видимой области, то удаляем его и 
+            // создаём новый квадрат
+            if ((*this->squares)[i]->is_out_of_visible_area(this->road_offset))
+            {
+                // СОЗДАТЬ КВАДРАТ
+                (*this->squares)[i] = std::make_shared<Square>(
+                    this->resource_manager,
+                    this->square_template_defender->get_random_square_template()
+                );
+
+                // Размещаем его в самом конце
+                (*this->squares)[i]->move_along_z_axis(this->road_offset * 9 * -1, this->road_offset, this->number_of_squares);
+            }
         }
     }
 
@@ -55,7 +63,6 @@ void GameRound::handle_events()
 {
     if (AiryEngine::Input::IsKeyPressed(AiryEngine::KeyCode::KEY_C))
     {
-        // std::cout << "Pause changed" << std::endl; 
         if (this->pause) this->pause = false;
         else this->pause = true;
         this->able_to_change_pause = false;
@@ -67,6 +74,10 @@ void GameRound::handle_events()
 }
 
 
+
+
+//==================================Create game objects==================================
+
 void GameRound::create_car(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
 {
     this->car = std::make_shared<Car>(
@@ -76,63 +87,27 @@ void GameRound::create_car(std::shared_ptr<AiryEngine::ResourceManager> resource
 }
 
 
-void GameRound::create_squares(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
+void GameRound::create_start_squares(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
 {
-    // std::cout << "GameRound::create_squares start" << std::endl;
-
     this->squares = std::make_shared<std::vector<std::shared_ptr<Square>>>();
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < this->number_of_squares; i++)
     {
-        this->squares->push_back(create_void_square(resource_manager));
-        this->squares->push_back(create_random_square(resource_manager));
+        std::shared_ptr<Square> curr_square = std::make_shared<Square>(
+            resource_manager,
+            this->square_template_defender->get_random_square_template()
+        );
+        this->squares->push_back(curr_square);
     }
-
-    // std::cout << "GameRound::create_squares finish" << std::endl;
 }
 
 
-void GameRound::set_squares_start_pos()
+void GameRound::place_start_squares()
 {
     for (int i = 0; i < this->squares->size(); i++)
     {
-        (*this->squares)[i]->move_along_z_axis(this->road_offset * i * -1, this->road_offset, this->number_of_squares);
+        (*this->squares)[i]->move_along_z_axis(-this->road_offset * i, this->road_offset, this->number_of_squares);
     }
-}
-
-
-std::shared_ptr<Square> GameRound::create_void_square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
-{
-    std::vector<std::pair<float, float>> barrier_coords;
-
-    std::vector<std::pair<float, float>> coin_coords;
-
-    std::vector<std::pair<float, float>> fuel_canister_coords;
-
-    std::shared_ptr<Square> curr_square = std::make_shared<Square>(
-        resource_manager,
-        this->square_types,
-        barrier_coords,
-        coin_coords,
-        fuel_canister_coords
-    );
-
-    this->number_of_squares += 1;
-
-    return curr_square;
-}
-
-
-std::shared_ptr<Square> GameRound::create_random_square(std::shared_ptr<AiryEngine::ResourceManager> resource_manager)
-{
-    std::shared_ptr<Square> curr_square = std::make_shared<Square>(
-        resource_manager,
-        this->square_types
-    );
-
-    this->number_of_squares += 1;
-
-    return curr_square;
 }
 
 
@@ -151,49 +126,6 @@ void GameRound::set_car_start_pos()
 void GameRound::drive_car()
 {
     this->car->update_moving_state();
-}
-
-
-void GameRound::create_square_types()
-{
-    /*
-    n - ничего (пустота)
-    c - монетка
-    b - барьер
-    k - канистра
-    */
-
-    this->square_types = std::make_shared<std::vector<std::string>>();
-
-    // С канистрой 
-    this->square_types->push_back("bkb");
-    this->square_types->push_back("kbb");
-    this->square_types->push_back("bbk");
-
-    // С монетками
-    this->square_types->push_back("bcb");
-    this->square_types->push_back("cbb");
-    this->square_types->push_back("bbc");
-
-    this->square_types->push_back("bcc");
-    this->square_types->push_back("ccb");
-
-    this->square_types->push_back("bcn");
-    this->square_types->push_back("ncb");
-
-    this->square_types->push_back("cbn");
-    this->square_types->push_back("nbc");
-
-    this->square_types->push_back("ccc");
-
-    // С пустотой
-    this->square_types->push_back("bnb");
-    this->square_types->push_back("nbb");
-    this->square_types->push_back("bbn");
-
-    this->square_types->push_back("nbn");
-
-    this->square_types->push_back("nnn");
 }
 
 
