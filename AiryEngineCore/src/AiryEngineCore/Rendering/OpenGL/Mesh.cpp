@@ -27,6 +27,7 @@ namespace AiryEngine {
         setup_render_data_mesh();
     }
 
+
     void Mesh::setup_render_data_mesh()
     {
         BufferLayout bufferLayout_vec3_vec3_vec2
@@ -45,103 +46,233 @@ namespace AiryEngine {
         this->vertex_array->unbind();
     }
 
+
     void Mesh::set_texture(std::shared_ptr<Texture2D> texture)
     {
         this->texture = texture;
     }
+
 
     void Mesh::set_has_texture(bool has_texture)
     {
         this->has_texture = has_texture;
     }
 
+
     void Mesh::set_material(std::shared_ptr<Material> material)
     {
         this->material = material;
     }
+
 
     void Mesh::set_diffuse_color(float r, float g, float b)
     {
         this->material->diffuse_color = glm::vec3(r, g, b);
     }
 
-    void Mesh::set_scale(float scale_x, float scale_y, float scale_z)
+
+    //====================SET TRANSLATE====================
+    void Mesh::set_translate(glm::vec3& translate)
     {
-        if (scale_x > 0) this->scale[0] = scale_x;
-        if (scale_y > 0) this->scale[1] = scale_y;
-        if (scale_z > 0) this->scale[2] = scale_z;
+        this->translate = translate;
     }
 
-    void Mesh::set_rotate(float angle_x, float angle_y, float angle_z)
-    {
-        //this->rotate = angle;
-        this->rotate[0] = angle_x;
-        this->rotate[1] = angle_y;
-        this->rotate[2] = angle_z;
-    }
 
     void Mesh::set_translate(float translate_x, float translate_y, float translate_z)
     {
-        this->translate[0] = translate_x;
-        this->translate[1] = translate_y;
-        this->translate[2] = translate_z;
+        this->translate = glm::vec3(translate_x, translate_y, translate_z);
     }
+
 
     void Mesh::set_translate_x(float value)
     {
-        this->translate[0] = value;
+        this->translate.x = value;
     }
+
 
     void Mesh::set_translate_y(float value)
     {
-        this->translate[1] = value;
+        this->translate.y = value;
     }
+
 
     void Mesh::set_translate_z(float value)
     {
-        this->translate[2] = value;
+        this->translate.z = value;
     }
 
-    void Mesh::get_scale(float (&_scale)[3]) const
+
+    //====================SET SCALE====================
+    void Mesh::set_scale(glm::vec3& scale)
     {
-        _scale[0] = this->scale[0];
-        _scale[1] = this->scale[1];
-        _scale[2] = this->scale[2];
+        this->scale = scale;
     }
 
-    void Mesh::get_rotate(float (&_rotate)[3]) const
+
+    void Mesh::set_scale(float scale_x, float scale_y, float scale_z)
     {
-        _rotate[0] = this->rotate[0];
-        _rotate[1] = this->rotate[1];
-        _rotate[2] = this->rotate[2];
+        this->scale = glm::vec3(scale_x, scale_y, scale_z);
     }
 
-    void Mesh::get_translate(float (&_translate)[3]) const
+
+    void Mesh::set_scale_x(float scale_x)
     {
-        _translate[0] = this->translate[0];
-        _translate[1] = this->translate[1];
-        _translate[2] = this->translate[2];
+        this->scale.x = scale_x;
     }
 
-    // void Mesh::get_scale(float* _scale)
-    // {
-    //     _scale[0] = this->scale[0];
-    //     _scale[1] = this->scale[1];
-    //     _scale[2] = this->scale[2];
-    // }
 
-    // void Mesh::get_rotate(float* rotate_x, float* rotate_y, float* rotate_z)
-    // {
-    //     *rotate_x = this->scale[0];
-    //     *rotate_y = this->scale[1];
-    //     *rotate_z = this->scale[2];
-    // }
+    void Mesh::set_scale_y(float scale_y)
+    {
+        this->scale.y = scale_y;
+    }
 
-    // void Mesh::get_translate(float* _translate)
-    // {
-    //     _translate[0] = this->translate[0];
-    //     _translate[1] = this->translate[1];
-    //     _translate[2] = this->translate[2];
-    // }
 
+    void Mesh::set_scale_z(float scale_z)
+    {
+        this->scale.z = scale_z;
+    }
+
+
+    //====================SET ROTATE====================
+    void Mesh::set_rotate(glm::vec3& rotate)
+    {
+        this->rotate = rotate;
+    }
+
+
+    void Mesh::set_rotate(float rotate_x, float rotate_y, float rotate_z)
+    {
+        this->rotate = glm::vec3(rotate_x, rotate_y, rotate_z);
+    }
+
+
+    void Mesh::set_rotate_x(float rotate_x)
+    {
+        this->rotate.x = rotate_x;
+    }
+
+
+    void Mesh::set_rotate_y(float rotate_y)
+    {
+        this->rotate.y = rotate_y;
+    }
+
+
+    void Mesh::set_rotate_z(float rotate_z)
+    {
+        this->rotate.z = rotate_z;
+    }    
+
+
+    //====================MOVE====================
+    void Mesh::move_mesh(glm::vec3& delta)
+    {
+        this->translate = this->translate + delta;
+    }
+
+
+    void Mesh::move_mesh(float delta_move_x, float delta_move_y, float delta_move_z)
+    {
+        this->translate = glm::vec3(
+            this->translate.x + delta_move_x,
+            this->translate.y + delta_move_y,
+            this->translate.z + delta_move_z
+        );
+    }
+
+
+    void Mesh::move_mesh_x(float delta_move_x)
+    {
+        this->translate.x = this->translate.x + delta_move_x;
+    }
+
+
+    void Mesh::move_mesh_y(float delta_move_y)
+    {
+        this->translate.y = this->translate.y + delta_move_y;
+    }
+
+
+    void Mesh::move_mesh_z(float delta_move_z)
+    {
+        this->translate.y = this->translate.y + delta_move_z;
+    }
+
+
+    //====================SCALE====================
+    void Mesh::scale_mesh(glm::vec3& scale)
+    {
+        this->scale = glm::vec3(
+            this->scale.x * scale.x,
+            this->scale.y * scale.y,
+            this->scale.z * scale.z
+        );
+    }
+
+
+    void Mesh::scale_mesh(float scale_x, float scale_y, float scale_z)
+    {
+        this->scale = glm::vec3(
+            this->scale.x * scale_x,
+            this->scale.y * scale_y,
+            this->scale.z * scale_z
+        );
+    }
+
+
+    void Mesh::scale_mesh_x(float scale_x)
+    {
+        this->scale.x = this->scale.x * scale_x;
+    }
+
+
+    void Mesh::scale_mesh_y(float scale_y)
+    {
+        this->scale.y = this->scale.y * scale_y;
+    }
+
+
+    void Mesh::scale_mesh_z(float scale_z)
+    {
+        this->scale.z = this->scale.z * scale_z;
+    }
+
+
+    //====================ROTATE====================
+    void Mesh::rotate_mesh(glm::vec3& delta_rotate)
+    {
+        this->rotate = glm::vec3(
+            this->rotate.x + delta_rotate.x,
+            this->rotate.y + delta_rotate.y,
+            this->rotate.z + delta_rotate.z
+        );
+    }
+
+
+    void Mesh::rotate_mesh(float delta_angle_x, float delta_angle_y, float delta_angle_z)
+    {
+        this->rotate = glm::vec3(
+            this->rotate.x + delta_angle_x,
+            this->rotate.y + delta_angle_y,
+            this->rotate.z + delta_angle_z
+        );
+    }
+
+
+    void Mesh::rotate_mesh_x(float delta_angle_x)
+    {
+        this->rotate.x = this->rotate.x + delta_angle_x;
+    }
+
+
+    void Mesh::rotate_mesh_y(float delta_angle_y)
+    {
+        this->rotate.y = this->rotate.y + delta_angle_y;
+    }
+
+
+    void Mesh::rotate_mesh_z(float delta_angle_z)
+    {
+        this->rotate.z = this->rotate.z + delta_angle_z;
+    }
 }
