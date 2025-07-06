@@ -123,12 +123,12 @@ namespace AiryEngine {
         current_shader->set_float("shininess",  mesh_material->shininess);
         current_shader->set_float("alpha_channel",  mesh_material->alpha_channel);
 
-        float scale[3] = {0};
-        float rotate[3] = {0};
-        float translate[3] = {0};
-        mesh->get_scale(scale);
-        mesh->get_rotate(rotate);
-        mesh->get_translate(translate);
+        // float scale[3] = {0};
+        // float rotate[3] = {0};
+        // float translate[3] = {0};
+        glm::vec3 scale = mesh->get_scale();
+        glm::vec3 rotate = mesh->get_rotate();
+        glm::vec3 translate = mesh->get_translate();
 
         glm::mat4 scale_matrix(
             scale[0], 0,        0,        0,
@@ -211,12 +211,9 @@ namespace AiryEngine {
         this->collision_shader_program->set_float("shininess",  mesh_material->shininess);
         this->collision_shader_program->set_float("alpha_channel",  mesh_material->alpha_channel);
 
-        float scale[3] = {0};
-        float rotate[3] = {0};
-        float translate[3] = {0};
-        mesh->get_scale(scale);
-        mesh->get_rotate(rotate);
-        mesh->get_translate(translate);
+        glm::vec3 scale = mesh->get_scale();
+        glm::vec3 rotate = mesh->get_rotate();
+        glm::vec3 translate = mesh->get_translate();
 
         glm::mat4 scale_matrix(
             scale[0], 0,        0,        0,
@@ -283,12 +280,9 @@ namespace AiryEngine {
         light_source_shader_program->set_matrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
         light_source_shader_program->set_vec3("light_color", light_source_color);
 
-        float scale[3];
-        float rotate[3];
-        float translate[3];
-        mesh->get_scale(scale);
-        mesh->get_rotate(rotate);
-        mesh->get_translate(translate);
+        glm::vec3 scale = mesh->get_scale();
+        glm::vec3 rotate = mesh->get_rotate();
+        glm::vec3 translate = mesh->get_translate();
 
         glm::mat4 scale_matrix(
             scale[0], 0,        0,        0,

@@ -233,6 +233,7 @@ namespace AiryEngine {
     //     Renderer_OpenGL::render_model3D(this->camera, Egor_model, default_shader_program, lsp_vec3, lsc_vec3);
     // }
 
+    /*
     std::shared_ptr<Model3D> Application::create_collision_cube_model(const std::string& model_name, const std::string& model_path, const std::string& model_dir_path)
     {
         std::shared_ptr<Model3D> model = this->resource_manager->load_model3D(model_name, model_path, model_dir_path);
@@ -259,6 +260,7 @@ namespace AiryEngine {
 
         return model;
     }
+    */
 
     glm::vec2 Application::get_current_cursor_position() const
     {
