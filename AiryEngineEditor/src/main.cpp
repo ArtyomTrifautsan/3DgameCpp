@@ -110,7 +110,7 @@ class AiryEngineEditor : public AiryEngine::Application
             m_initial_mouse_pos_y = current_cursor_position.y;
         }
 
-        camera.add_movement_and_rotation(movement_delta, rotation_delta);   
+        camera->add_movement_and_rotation(movement_delta, rotation_delta);   
     }
 
     virtual void on_mouse_button_pressed(const AiryEngine::MouseButtonCode mouse_button_code, 
