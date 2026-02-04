@@ -2,16 +2,27 @@
 #include <iostream>
 #include <memory>
 #include <imgui/imgui.h>
+#include <glm/trigonometric.hpp>
 using std::cout;
 using std::endl;
 
 #include <AiryEngineCore/Application.hpp>
 #include <AiryEngineCore/Input.hpp>
+#include <AiryEngineCore/ResourceManager.hpp>
 
 class AiryEngineEditor : public AiryEngine::Application
 {
+public:
+    AiryEngineEditor(std::shared_ptr<AiryEngine::ResourceManager> _resource_manager) : AiryEngine::Application(_resource_manager)
+    {
+        // set_executable_path(executable_path);
+        // std::cout << "GameApplication constructor started" << std::endl;
+    }
     double m_initial_mouse_pos_x = 0.0;
     double m_initial_mouse_pos_y = 0.0;
+
+    float camera_position[3] = {0, 0, 0};
+    float camera_rotation[3] = {0, 0, 0};
 
     virtual void on_update() override
     {
@@ -97,8 +108,8 @@ class AiryEngineEditor : public AiryEngine::Application
 
             if (AiryEngine::Input::IsMouseButtonPressed(AiryEngine::MouseButtonCode::MOUSE_BUTTON_LEFT))
             {
-                camera.move_right(static_cast<float>(current_cursor_position.x - m_initial_mouse_pos_x) / 100.f );
-                camera.move_up(static_cast<float>(m_initial_mouse_pos_y - current_cursor_position.y) / 100.f );
+                camera->move_right(static_cast<float>(current_cursor_position.x - m_initial_mouse_pos_x) / 100.f );
+                camera->move_up(static_cast<float>(m_initial_mouse_pos_y - current_cursor_position.y) / 100.f );
             }
             else
             {
@@ -110,7 +121,7 @@ class AiryEngineEditor : public AiryEngine::Application
             m_initial_mouse_pos_y = current_cursor_position.y;
         }
 
-        camera.add_movement_and_rotation(movement_delta, rotation_delta);   
+        camera->add_movement_and_rotation(movement_delta, rotation_delta);   
     }
 
     virtual void on_mouse_button_pressed(const AiryEngine::MouseButtonCode mouse_button_code, 
@@ -126,24 +137,24 @@ class AiryEngineEditor : public AiryEngine::Application
 
     virtual void on_ui_draw() override
     {
-        camera_position[0] = camera.get_camera_position().x;
-        camera_position[1] = camera.get_camera_position().y;
-        camera_position[2] = camera.get_camera_position().z;
+        camera_position[0] = camera->get_camera_position().x;
+        camera_position[1] = camera->get_camera_position().y;
+        camera_position[2] = camera->get_camera_position().z;
 
-        camera_rotation[0] = camera.get_camera_rotation().x;
-        camera_rotation[1] = camera.get_camera_rotation().y;
-        camera_rotation[2] = camera.get_camera_rotation().z;
+        camera_rotation[0] = camera->get_camera_rotation().x;
+        camera_rotation[1] = camera->get_camera_rotation().y;
+        camera_rotation[2] = camera->get_camera_rotation().z;
 
         ImGui::Begin("Editor");
         if (ImGui::SliderFloat3("camera position", camera_position, -10.0f, 10.0f))
         {
-            camera.set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
+            camera->set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
         }
         if (ImGui::SliderFloat3("camera rotation", camera_rotation, 0.0f, 360.0f))
         {
-            camera.set_rotation(glm::vec3(camera_rotation[0], camera_rotation[1], camera_rotation[2]));
+            camera->set_rotation(glm::vec3(camera_rotation[0], camera_rotation[1], camera_rotation[2]));
         }
-        ImGui::Checkbox("Perspective camera", &perspective_camera);
+        // ImGui::Checkbox("Perspective camera", &perspective_camera);
         ImGui::End();
     }   
 
@@ -152,7 +163,12 @@ class AiryEngineEditor : public AiryEngine::Application
 
 int main(int argc, char const *argv[])
 {
-    auto airyEngineEditor = std::make_unique<AiryEngineEditor>();
+    auto resource_manager = std::make_shared<AiryEngine::ResourceManager>(argv[0]);
+    resource_manager->set_shaders_directory("Resources/Shaders");
+    resource_manager->set_textures_directory("Resources/Textures");
+    resource_manager->set_models_directory("Resources/Models");
+
+    auto airyEngineEditor = std::make_unique<AiryEngineEditor>(resource_manager);
     int returnCode = airyEngineEditor->start(1024, 768, "AiryEngine Editor");
 
     return returnCode;
