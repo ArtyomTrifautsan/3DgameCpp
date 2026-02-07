@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+#include <glm/vec3.hpp>
+
 
 namespace AiryEngine {
 
@@ -42,6 +44,11 @@ namespace AiryEngine {
         void rotate_model_y(float delta_angle_y);
         void rotate_model_z(float delta_angle_z);
 
+        glm::vec3 get_translate() const 
+        {
+            return glm::vec3{translate[0], translate[1], translate[2]};
+        }
+
     private:
         std::vector<std::shared_ptr<Mesh>> meshes;
 
@@ -49,5 +56,7 @@ namespace AiryEngine {
         float rotate[3] = { 0.0f, 0.0f, 0.0f };
         float translate[3] = { 0.0f, 0.0f, 0.0f };
     };
+
+    std::shared_ptr<Model3D> create_model_from_points();
     
 }

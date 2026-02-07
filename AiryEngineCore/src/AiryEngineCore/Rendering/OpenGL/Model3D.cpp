@@ -2,6 +2,7 @@
 
 #include "AiryEngineCore/Rendering/OpenGL/Mesh.hpp"
 #include "AiryEngineCore/Rendering/OpenGL/ShaderProgram.hpp"
+#include "AiryEngineCore/Rendering/OpenGL/VertexBuffer.hpp"
 
 
 namespace AiryEngine {
@@ -117,4 +118,53 @@ namespace AiryEngine {
     // void Model3D::rotate_x(float delta_angle_x);
     // void Model3D::rotate_y(float delta_angle_y);
     // void Model3D::rotate_z(float delta_angle_z);
+
+
+    std::vector<float> __temp1 = {
+        //    position                  index
+
+        // FRONT
+         1.0f,  1.0f,  1.0f,              // 0        Правая верхняя
+         1.0f, -1.0f,  1.0f,              // 1        Правая нижняя
+        -1.0f,  1.0f,  1.0f,              // 2        Левая верхняя
+        -1.0f, -1.0f,  1.0f,              // 3        Левая нижняя
+
+        // BACK                                  
+         1.0f,  1.0f, -1.0f,              // 4        Правая верхняя
+         1.0f, -1.0f, -1.0f,              // 5        Правая нижняя
+        -1.0f,  1.0f, -1.0f,              // 6        Левая верхняя
+        -1.0f, -1.0f, -1.0f              // 7        Левая нижняя
+    };
+    std::shared_ptr<std::vector<float>> studing_cube_vertices = std::make_shared<std::vector<float>>(std::move(__temp1));
+
+    std::vector<unsigned int> __temp2 = {
+        0, 1, 2, 2, 3, 1, // front
+        4, 5, 6, 6, 7, 5, // back
+        1, 0, 4, 4, 5, 1, // right
+        3, 2, 6, 6, 7, 3, // left
+        0, 2, 6, 6, 4, 0, // top
+        1, 3, 7, 7, 5, 1  // bottom
+    };
+    std::shared_ptr<std::vector<unsigned int>> studing_cube_indices = std::make_shared<std::vector<unsigned int>>(std::move(__temp2));
+
+    std::shared_ptr<Model3D> create_model_from_points()
+    {
+        BufferLayout bufferLayout_vec3
+        {
+            ShaderDataType::Float3
+        };
+
+        std::shared_ptr<Material> material = std::make_shared<Material>();
+
+        std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(
+            studing_cube_vertices,
+            studing_cube_indices,
+            bufferLayout_vec3,
+            material
+        );
+
+        std::vector<std::shared_ptr<Mesh>> _meshes = { mesh };
+
+        return std::make_shared<Model3D>(_meshes);
+    }
 }

@@ -9,6 +9,9 @@ using std::endl;
 #include <AiryEngineCore/Application.hpp>
 #include <AiryEngineCore/Input.hpp>
 #include <AiryEngineCore/ResourceManager.hpp>
+#include <AiryEngineCore/Renderer.hpp>
+#include <AiryEngineCore/Rendering/OpenGL/Model3D.hpp>
+#include <AiryEngineCore/Rendering/OpenGL/ShaderProgram.hpp>
 
 class AiryEngineEditor : public AiryEngine::Application
 {
@@ -23,6 +26,26 @@ public:
 
     float camera_position[3] = {0, 0, 0};
     float camera_rotation[3] = {0, 0, 0};
+    float m_cube_color[3] = {0, 0, 0};
+
+    std::shared_ptr<AiryEngine::Renderer> m_renderer = nullptr;
+    std::shared_ptr<AiryEngine::Model3D> m_studing_cube = nullptr;
+    std::shared_ptr<AiryEngine::ShaderProgram> m_shader = nullptr;
+
+    virtual void on_start(std::shared_ptr<AiryEngine::ResourceManager> resource_manager) override
+    {
+        // m_shader = _resource_manager->load_shaders("shader_for_cube", )
+        m_shader = resource_manager->load_shaders("shader_for_cube", "default_vertex_shader copy.txt", "default_fragment_shader copy.txt");
+        if (!m_shader->is_compiled()) 
+        {
+            // LOG_CRITICAL("Failed to compile Default Shader Program");
+            cout << "Failed to compile Default Shader Program" <<std::endl;
+        }
+        // cout << "Перед созданием модели" <<std::endl;
+        m_renderer = std::make_shared<AiryEngine::Renderer>();
+        m_studing_cube = AiryEngine::create_model_from_points();
+        // cout << "После" <<std::endl;
+    }
 
     virtual void on_update() override
     {
@@ -108,13 +131,13 @@ public:
 
             if (AiryEngine::Input::IsMouseButtonPressed(AiryEngine::MouseButtonCode::MOUSE_BUTTON_LEFT))
             {
-                camera->move_right(static_cast<float>(current_cursor_position.x - m_initial_mouse_pos_x) / 100.f );
-                camera->move_up(static_cast<float>(m_initial_mouse_pos_y - current_cursor_position.y) / 100.f );
+                camera->move_right(static_cast<float>(-(current_cursor_position.x - m_initial_mouse_pos_x)) / 100.f );
+                camera->move_up(static_cast<float>(-(m_initial_mouse_pos_y - current_cursor_position.y)) / 100.f );
             }
             else
             {
-                rotation_delta.z += static_cast<float>(m_initial_mouse_pos_x - current_cursor_position.x) / 5.f;
-                rotation_delta.y -= static_cast<float>(m_initial_mouse_pos_y - current_cursor_position.y) / 5.f;
+                rotation_delta.y += static_cast<float>(m_initial_mouse_pos_x - current_cursor_position.x) / 5.f;
+                rotation_delta.x += static_cast<float>(m_initial_mouse_pos_y - current_cursor_position.y) / 5.f;
             }
 
             m_initial_mouse_pos_x = current_cursor_position.x;
@@ -133,6 +156,18 @@ public:
         m_initial_mouse_pos_y = y_pos;
 
 
+    }
+
+    virtual void on_draw() override 
+    {
+        // cout << "Начали он_дроу" <<std::endl;
+        // if (m_shader == nullptr)
+            // cout << "Проблема: m_shader == nullptr" <<std::endl;
+        m_renderer->use_shader(m_shader);
+        // cout << "Прицепили шейдер" <<std::endl;
+        m_renderer->render_model3D(*camera, m_studing_cube);
+        // glm::vec3 center_of_cube = m_studing_cube->get_translate();
+        // cout << "Нарисовали куб с центром в точке (" << center_of_cube[0] << ", " << center_of_cube[1] << ", " << center_of_cube[2] << ")." << std::endl;
     }
 
     virtual void on_ui_draw() override
@@ -155,6 +190,12 @@ public:
             camera->set_rotation(glm::vec3(camera_rotation[0], camera_rotation[1], camera_rotation[2]));
         }
         // ImGui::Checkbox("Perspective camera", &perspective_camera);
+
+        if (ImGui::SliderFloat3("Cube color", m_cube_color, 0.0f, 1.0f))
+        {
+            m_studing_cube->set_diffuse_color(m_cube_color[0], m_cube_color[1], m_cube_color[2]);
+            // camera->set_rotation(glm::vec3(camera_rotation[0], camera_rotation[1], camera_rotation[2]));
+        }
         ImGui::End();
     }   
 

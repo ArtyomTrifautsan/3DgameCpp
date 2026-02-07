@@ -30,6 +30,7 @@ namespace AiryEngine {
 
         const glm::mat4 get_view_matrix();
         const glm::mat4 get_projection_matrix() const { return m_projection_matrix; }
+        const glm::mat4 get_view_projection_matrix();
 
         const float get_far_clip_plane() const { return this->far_clip_plane; }
         const float get_near_clip_plane() const { return this->near_clip_plane; }
@@ -49,6 +50,7 @@ namespace AiryEngine {
     private:
         void update_view_matrix();
         void update_projection_matrix();
+        void update_view_projection_matrix();
 
         glm::vec3 m_position;
         glm::vec3 m_rotation;   // X - Roll, Y - Pitch, Z - Yaw
@@ -68,11 +70,13 @@ namespace AiryEngine {
         // static constexpr glm::vec3 s_world_forward{ 1.f, 0.f, 0.f };
         static constexpr glm::vec3 s_world_up{ 0.f, 1.f, 0.f };
         static constexpr glm::vec3 s_world_right{ 1.f, 0.f, 0.f };
-        static constexpr glm::vec3 s_world_forward{ 0.f, 0.f, 1.f };
+        static constexpr glm::vec3 s_world_forward{ 0.f, 0.f, -1.f };
 
         glm::mat4 m_view_matrix;
         glm::mat4 m_projection_matrix;
+        glm::mat4 m_view_projection_matrix;
         bool m_update_view_matrix = false;
+        bool m_update_view_projection_matrix = false;
     };
 
 }

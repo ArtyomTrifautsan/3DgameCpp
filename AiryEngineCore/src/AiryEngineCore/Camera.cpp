@@ -15,24 +15,13 @@ namespace AiryEngine {
         update_projection_matrix();
     }
 
-    const glm::mat4 Camera::get_view_matrix()
-    {
-        if (m_update_view_matrix)
-        {
-            update_view_matrix();
-            m_update_view_matrix = false;
-        }
-
-        return m_view_matrix;
-    }
-
     void Camera::update_view_matrix()
     {
         const float roll_in_radians = glm::radians(m_rotation.x);
         const float pitch_in_radians = glm::radians(m_rotation.y);      
         const float yaw_in_radians = glm::radians(m_rotation.z);
 
-        const glm::mat3 rotate_matrix_x( 
+        const glm::mat3 rotate_matrix_x(
             1,  0,                    0,
             0,  cos(roll_in_radians), sin(roll_in_radians),
             0, -sin(roll_in_radians), cos(roll_in_radians)
@@ -85,6 +74,35 @@ namespace AiryEngine {
                                             0, 0, -2 / (f - n), 0,
                                             0, 0, (-f - n) / (f - n), 1);
         }
+    }
+
+    void Camera::update_view_projection_matrix()
+    {
+        m_view_projection_matrix = m_projection_matrix * m_view_matrix;
+    }
+
+    const glm::mat4 Camera::get_view_matrix()
+    {
+        if (m_update_view_matrix)
+        {
+            update_view_matrix();
+            update_view_projection_matrix();
+            m_update_view_matrix = false;
+        }
+
+        return m_view_matrix;
+    }
+
+    const glm::mat4 Camera::get_view_projection_matrix()
+    {
+        if (m_update_view_matrix)
+        {
+            update_view_matrix();
+            update_view_projection_matrix();
+            m_update_view_matrix = false;
+        }
+
+        return m_view_projection_matrix;
     }
         
     void Camera::set_position(const glm::vec3& position)

@@ -17,26 +17,39 @@
 namespace AiryEngine {
 
     Mesh::Mesh(std::shared_ptr<std::vector<float>> vertices, 
-                std::shared_ptr<std::vector<unsigned int>> indices, 
+                std::shared_ptr<std::vector<unsigned int>> indices,
+                const BufferLayout& layout,
                 std::shared_ptr<Material> material)
     {
         this->vertices = vertices;
         this->indices = indices;
         this->material = material;
 
-        setup_render_data_mesh();
+        setup_render_data_mesh(layout);
     }
 
-    void Mesh::setup_render_data_mesh()
-    {
-        BufferLayout bufferLayout_vec3_vec3_vec2
-        {
-            ShaderDataType::Float3,
-            ShaderDataType::Float3,
-            ShaderDataType::Float2
-        };
+    // void Mesh::setup_render_data_mesh()
+    // {
+    //     BufferLayout bufferLayout_vec3_vec3_vec2
+    //     {
+    //         ShaderDataType::Float3,
+    //         ShaderDataType::Float3,
+    //         ShaderDataType::Float2
+    //     };
 
-        this->vertex_buffer = std::make_shared<VertexBuffer>(this->vertices->data(), this->vertices->size() * sizeof(float), bufferLayout_vec3_vec3_vec2);
+    //     this->vertex_buffer = std::make_shared<VertexBuffer>(this->vertices->data(), this->vertices->size() * sizeof(float), bufferLayout_vec3_vec3_vec2);
+    //     this->vertex_array = std::make_shared<VertexArray>();
+    //     this->index_buffer = std::make_shared<IndexBuffer>(this->indices->data(), this->indices->size());
+    //     vertex_array->add_vertex_buffer(*this->vertex_buffer);
+    //     vertex_array->set_index_buffer(*this->index_buffer);
+
+    //     this->vertex_array->unbind();
+    // }
+
+
+    void Mesh::setup_render_data_mesh(const BufferLayout& layout)
+    {
+        this->vertex_buffer = std::make_shared<VertexBuffer>(this->vertices->data(), this->vertices->size() * sizeof(float), layout);
         this->vertex_array = std::make_shared<VertexArray>();
         this->index_buffer = std::make_shared<IndexBuffer>(this->indices->data(), this->indices->size());
         vertex_array->add_vertex_buffer(*this->vertex_buffer);

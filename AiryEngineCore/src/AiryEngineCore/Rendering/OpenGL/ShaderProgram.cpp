@@ -79,7 +79,13 @@ namespace AiryEngine
         glDeleteShader(fragment_shader_id);
     }
 
-    ShaderProgram::~ShaderProgram() { glDeleteProgram(this->id); }
+    ShaderProgram::~ShaderProgram()
+    { 
+        // glDeleteProgram(this->id);
+        if (id != 0 && is_shader_compiled) {
+            glDeleteProgram(id);  // ← КРИТИЧНО: вызов вне контекста OpenGL!
+        }
+    }
 
     void ShaderProgram::bind() const { glUseProgram(this->id); }
 

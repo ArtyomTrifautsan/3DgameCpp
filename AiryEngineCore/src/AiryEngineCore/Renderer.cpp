@@ -1,6 +1,6 @@
 #include "AiryEngineCore/Renderer.hpp"
 
-#include <glm/trigonometric.hpp>
+// #include <glm/trigonometric.hpp>
 
 #include "AiryEngineCore/Log.hpp"
 #include "AiryEngineCore/Camera.hpp"
@@ -13,44 +13,52 @@
 #include "AiryEngineCore/Rendering/OpenGL/VertexArray.hpp"
 #include "AiryEngineCore/Rendering/OpenGL/Texture2D.hpp"
 
+#include <iostream>
+
 namespace AiryEngine {
 
-    Renderer::Renderer(std::shared_ptr<ResourceManager> resource_manager)
+    // Renderer::Renderer(std::shared_ptr<ResourceManager> resource_manager)
+    // {
+    //     // LOG_INFO("Start shaders");
+    //     // this->default_shader_program = resource_manager->load_shaders("default_shaders", "default_vertex_shader.txt", "default_fragment_shader.txt");
+    //     // if (!this->default_shader_program->is_compiled()) 
+    //     // {
+    //     //     LOG_CRITICAL("Failed to compile Default Shader Program");
+    //     // }
+
+    //     // this->light_source_shader_program = resource_manager->load_shaders("light_source_shaders", "light_source_vertex_shader.txt", "light_source_fragment_shader.txt");
+    //     // if (!this->light_source_shader_program->is_compiled()) 
+    //     // {
+    //     //     LOG_CRITICAL("Failed to compile Light Shader Program");
+    //     // }
+
+    //     // this->collision_shader_program = resource_manager->load_shaders("collision_shaders", "collision_vertex_shader.txt", "collision_fragment_shader.txt");
+    //     // if (!this->light_source_shader_program->is_compiled()) 
+    //     // {
+    //     //     LOG_CRITICAL("Failed to compile Light Shader Program");
+    //     // }
+
+    //     // this->model3D_material_shader_program = resource_manager->load_shaders("model3D_material_shaders", "vertex_model3D_material.txt", "fragment_model3D_material.txt");
+    //     // if (!this->light_source_shader_program->is_compiled()) 
+    //     // {
+    //     //     LOG_CRITICAL("Failed to compile model3D_material Shader Program");
+    //     // }
+
+    //     // this->model3D_texture_shader_program = resource_manager->load_shaders("model3D_texture_shaders", "vertex_model3D_texture.txt", "fragment_model3D_texture.txt");
+    //     // if (!this->light_source_shader_program->is_compiled()) 
+    //     // {
+    //     //     LOG_CRITICAL("Failed to compile model3D_texture Shader Program");
+    //     // }
+
+    //     // LOG_INFO("Finish shaders");
+    // }
+
+    void Renderer::use_shader(std::shared_ptr<ShaderProgram> _shader)
     {
-        // LOG_INFO("Start shaders");
-        this->default_shader_program = resource_manager->load_shaders("default_shaders", "default_vertex_shader.txt", "default_fragment_shader.txt");
-        if (!this->default_shader_program->is_compiled()) 
-        {
-            LOG_CRITICAL("Failed to compile Default Shader Program");
-        }
-
-        this->light_source_shader_program = resource_manager->load_shaders("light_source_shaders", "light_source_vertex_shader.txt", "light_source_fragment_shader.txt");
-        if (!this->light_source_shader_program->is_compiled()) 
-        {
-            LOG_CRITICAL("Failed to compile Light Shader Program");
-        }
-
-        this->collision_shader_program = resource_manager->load_shaders("collision_shaders", "collision_vertex_shader.txt", "collision_fragment_shader.txt");
-        if (!this->light_source_shader_program->is_compiled()) 
-        {
-            LOG_CRITICAL("Failed to compile Light Shader Program");
-        }
-
-        this->model3D_material_shader_program = resource_manager->load_shaders("model3D_material_shaders", "vertex_model3D_material.txt", "fragment_model3D_material.txt");
-        if (!this->light_source_shader_program->is_compiled()) 
-        {
-            LOG_CRITICAL("Failed to compile model3D_material Shader Program");
-        }
-
-        this->model3D_texture_shader_program = resource_manager->load_shaders("model3D_texture_shaders", "vertex_model3D_texture.txt", "fragment_model3D_texture.txt");
-        if (!this->light_source_shader_program->is_compiled()) 
-        {
-            LOG_CRITICAL("Failed to compile model3D_texture Shader Program");
-        }
-
-        // LOG_INFO("Finish shaders");
+        // LOG_INFO("Хотим прикрепить шейдер");
+        m_shader = _shader;
+        // LOG_INFO("Прикрепили");
     }
-
 
     void Renderer::render_model3D(class Camera& camera, std::shared_ptr<Model3D> model)
     {
@@ -68,6 +76,7 @@ namespace AiryEngine {
         }
     }
 
+    /*
     void Renderer::render_mesh(class Camera& camera, std::shared_ptr<Mesh> mesh)
     {
         std::shared_ptr<Material> mesh_material = mesh->get_material();
@@ -179,6 +188,178 @@ namespace AiryEngine {
         Renderer_OpenGL::draw_vertex_elements(*mesh->get_vertex_array());
         
         mesh->get_vertex_array()->unbind();
+    }   
+    */
+
+    // void Renderer::send_uniform_data_to_shader(class Camera& camera, std::shared_ptr<Mesh> mesh)
+    // {
+    //     std::shared_ptr<Material> mesh_material = mesh->get_material();
+
+    //     m_shader->set_matrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
+    //     m_shader->set_vec3("camera_position", camera.get_camera_position());
+    //     m_shader->set_vec3("light_position", this->light_source_position);
+    //     m_shader->set_vec3("light_color", this->light_source_color);
+    //     m_shader->set_vec3("ambient_color", mesh_material->ambient_color);
+    //     m_shader->set_float("ambient_factor",  this->ambient_factor);
+    //     m_shader->set_vec3("diffuse_color", mesh_material->diffuse_color);
+    //     m_shader->set_float("diffuse_factor",  this->diffuse_factor);
+    //     m_shader->set_vec3("specular_color", mesh_material->specular_color);
+    //     m_shader->set_float("specular_factor",  this->specular_factor);
+    //     m_shader->set_float("shininess",  mesh_material->shininess);
+    //     m_shader->set_float("alpha_channel",  mesh_material->alpha_channel);
+    // }
+
+    // void Renderer::send_model_matrix_to_shader(std::shared_ptr<Mesh> mesh)
+    // {
+    //     // float scale[3] = {0};
+    //     // float rotate[3] = {0};
+    //     // float translate[3] = {0};
+    //     mesh->get_scale(m_scale);
+    //     mesh->get_rotate(m_rotate);
+    //     mesh->get_translate(m_translate);
+
+    //     // glm::mat4 scale_matrix(
+    //     //     scale[0], 0,        0,        0,
+    //     //     0,        scale[1], 0,        0,
+    //     //     0,        0,        scale[2], 0,
+    //     //     0,        0,        0,        1
+    //     // );
+    //     m_scale_matrix[0][0] = m_scale[0];
+    //     m_scale_matrix[1][1] = m_scale[1];
+    //     m_scale_matrix[2][2] = m_scale[2];
+
+    //     m_rotate_x_in_radians = glm::radians(m_rotate[0]);
+    //     // glm::mat4 rotate_x_matrix(
+    //     //      1,  0,                        0,                        0,
+    //     //      0,  cos(rotate_x_in_radians), sin(rotate_x_in_radians), 0,
+    //     //      0, -sin(rotate_x_in_radians), cos(rotate_x_in_radians), 0,
+    //     //      0,  0,                        0,                        1
+    //     // );
+    //     m_rotate_x_matrix[1][1] = cos(m_rotate_x_in_radians);
+    //     m_rotate_x_matrix[2][1] = sin(m_rotate_x_in_radians);
+    //     m_rotate_x_matrix[1][2] = -sin(m_rotate_x_in_radians);
+    //     m_rotate_x_matrix[2][2] = cos(m_rotate_x_in_radians);
+
+    //     m_rotate_y_in_radians = glm::radians(m_rotate[1]);
+    //     // glm::mat4 rotate_y_matrix(
+    //     //      cos(rotate_y_in_radians), 0, -sin(rotate_y_in_radians), 0,
+    //     //      0,                        1,  0,                        0,
+    //     //      sin(rotate_y_in_radians), 0,  cos(rotate_y_in_radians), 0,
+    //     //      0,                        0,  0,                        1
+    //     // );
+    //     m_rotate_y_matrix[0][0] = cos(m_rotate_y_in_radians);
+    //     m_rotate_y_matrix[2][0] = -sin(m_rotate_y_in_radians);
+    //     m_rotate_y_matrix[0][2] = sin(m_rotate_y_in_radians);
+    //     m_rotate_y_matrix[2][2] = cos(m_rotate_y_in_radians);
+
+    //     m_rotate_z_in_radians = glm::radians(m_rotate[2]);
+    //     // glm::mat4 rotate_z_matrix(
+    //     //      cos(rotate_z_in_radians), sin(rotate_z_in_radians), 0, 0,
+    //     //     -sin(rotate_z_in_radians), cos(rotate_z_in_radians), 0, 0,
+    //     //      0,                      0,                      1, 0,
+    //     //      0,                      0,                      0, 1
+    //     // );
+    //     m_rotate_z_matrix[0][0] = cos(m_rotate_z_in_radians);
+    //     m_rotate_z_matrix[1][0] = sin(m_rotate_z_in_radians);
+    //     m_rotate_z_matrix[0][1] = -sin(m_rotate_z_in_radians);
+    //     m_rotate_z_matrix[1][1] = cos(m_rotate_z_in_radians);
+
+    //     m_rotate_matrix = m_rotate_z_matrix * m_rotate_y_matrix * m_rotate_x_matrix;
+
+    //     // glm::mat4 translate_matrix(
+    //     //     1,            0,            0,            0,
+    //     //     0,            1,            0,            0,
+    //     //     0,            0,            1,            0,  
+    //     //     translate[0], translate[1], translate[2], 1
+    //     // );
+    //     m_translate_matrix[0][3] = m_translate[0];
+    //     m_translate_matrix[1][3] = m_translate[1];
+    //     m_translate_matrix[2][3] = m_translate[2];
+
+    //     m_model_matrix = m_translate_matrix * m_rotate_matrix * m_scale_matrix;
+
+    //     // this->default_shader_program->set_matrix4("model_matrix", model_matrix);
+    //     m_shader->set_matrix4("model_matrix", m_model_matrix);
+    // }
+    
+
+    void Renderer::send_uniform_data_to_shader(class Camera& camera, std::shared_ptr<Mesh> mesh)
+    {
+        std::shared_ptr<Material> mesh_material = mesh->get_material();
+
+        // m_shader->set_matrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
+        m_shader->set_matrix4("view_projection_matrix", camera.get_view_projection_matrix());
+        m_shader->set_vec3("color", mesh_material->diffuse_color);
+    }
+
+
+    void Renderer::send_model_matrix_to_shader(std::shared_ptr<Mesh> mesh)
+    {
+        mesh->get_scale(m_scale);
+        mesh->get_rotate(m_rotate);
+        mesh->get_translate(m_translate);
+
+        m_scale_matrix[0][0] = m_scale[0];
+        m_scale_matrix[1][1] = m_scale[1];
+        m_scale_matrix[2][2] = m_scale[2];
+
+        m_rotate_x_in_radians = glm::radians(m_rotate[0]);
+        m_rotate_x_matrix[1][1] = cos(m_rotate_x_in_radians);
+        m_rotate_x_matrix[2][1] = sin(m_rotate_x_in_radians);
+        m_rotate_x_matrix[1][2] = -sin(m_rotate_x_in_radians);
+        m_rotate_x_matrix[2][2] = cos(m_rotate_x_in_radians);
+
+        m_rotate_y_in_radians = glm::radians(m_rotate[1]);
+        m_rotate_y_matrix[0][0] = cos(m_rotate_y_in_radians);
+        m_rotate_y_matrix[2][0] = -sin(m_rotate_y_in_radians);
+        m_rotate_y_matrix[0][2] = sin(m_rotate_y_in_radians);
+        m_rotate_y_matrix[2][2] = cos(m_rotate_y_in_radians);
+
+        m_rotate_z_in_radians = glm::radians(m_rotate[2]);
+        m_rotate_z_matrix[0][0] = cos(m_rotate_z_in_radians);
+        m_rotate_z_matrix[1][0] = sin(m_rotate_z_in_radians);
+        m_rotate_z_matrix[0][1] = -sin(m_rotate_z_in_radians);
+        m_rotate_z_matrix[1][1] = cos(m_rotate_z_in_radians);
+
+        m_rotate_matrix = m_rotate_z_matrix * m_rotate_y_matrix * m_rotate_x_matrix;
+
+        m_translate_matrix[0][3] = m_translate[0];
+        m_translate_matrix[1][3] = m_translate[1];
+        m_translate_matrix[2][3] = m_translate[2];
+
+        m_model_matrix = m_translate_matrix * m_rotate_matrix * m_scale_matrix;
+
+        m_shader->set_matrix4("model_matrix", m_model_matrix);
+    }
+
+    void Renderer::render_mesh(class Camera& camera, std::shared_ptr<Mesh> mesh)
+    {
+        // std::cout << "Начали рендерить меш" << std::endl;
+
+        m_shader->bind();
+
+        // std::cout << "Забиндили шейдер" << std::endl;
+
+        mesh->get_vertex_array()->bind();
+
+        // std::cout << "Забиндили вертексный массив" << std::endl;
+
+        send_uniform_data_to_shader(camera, mesh);
+
+        // std::cout << "Отправили данные на шейдер" << std::endl;
+
+        send_model_matrix_to_shader(mesh);
+
+        // std::cout << "Отправили модел матрикс на шейдер" << std::endl;
+
+        Renderer_OpenGL::draw_vertex_elements(*mesh->get_vertex_array());
+
+        // std::cout << "Нарисовали" << std::endl;
+        
+        mesh->get_vertex_array()->unbind();
+        m_shader->unbind();
+
+        // std::cout << "Конец" << std::endl;
     }
 
     void Renderer::render_collision_model(class Camera& camera, std::shared_ptr<Model3D> model)
@@ -200,7 +381,8 @@ namespace AiryEngine {
         this->collision_shader_program->bind();
         mesh->get_vertex_array()->bind();
 
-        this->collision_shader_program->set_matrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
+        // this->collision_shader_program->set_matrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
+        this->collision_shader_program->set_matrix4("view_projection_matrix", camera.get_view_projection_matrix());
         this->collision_shader_program->set_vec3("camera_position", camera.get_camera_position());
         this->collision_shader_program->set_vec3("ambient_color", mesh_material->ambient_color);
         this->collision_shader_program->set_float("ambient_factor",  this->ambient_factor);
@@ -280,7 +462,8 @@ namespace AiryEngine {
         light_source_shader_program->bind();
         mesh->get_vertex_array()->bind();
 
-        light_source_shader_program->set_matrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
+        // light_source_shader_program->set_matrix4("view_projection_matrix", camera.get_projection_matrix() * camera.get_view_matrix());
+        light_source_shader_program->set_matrix4("view_projection_matrix", camera.get_view_projection_matrix());
         light_source_shader_program->set_vec3("light_color", light_source_color);
 
         float scale[3];

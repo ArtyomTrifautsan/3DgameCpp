@@ -38,7 +38,8 @@ namespace AiryEngine {
     {
     public:
         Mesh(std::shared_ptr<std::vector<float>> vertices, 
-                std::shared_ptr<std::vector<unsigned int>> indices, 
+                std::shared_ptr<std::vector<unsigned int>> indices,
+                const BufferLayout& layout,
                 std::shared_ptr<Material> material);
         
         // void draw(std::shared_ptr<ShaderProgram> shader_program, Camera& camera, const glm::vec3& light_source_position, const glm::vec3& light_source_color);
@@ -95,7 +96,7 @@ namespace AiryEngine {
         float specular_factor = 0.5f;        // Temporary solution
         float shininess = 32.0f;        // Temporary solution
 
-        void setup_render_data_mesh();
+        void setup_render_data_mesh(const BufferLayout& layout);
 }; 
 
 }

@@ -15,6 +15,7 @@
 #include "AiryEngineCore/Rendering/OpenGL/Mesh.hpp"
 #include "AiryEngineCore/Rendering/OpenGL/ShaderProgram.hpp"
 #include "AiryEngineCore/Rendering/OpenGL/Texture2D.hpp"
+#include "AiryEngineCore/Rendering/OpenGL/VertexBuffer.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -258,6 +259,13 @@ namespace AiryEngine {
     {
         // LOG_INFO("load_OBJ method was runned");
 
+        BufferLayout bufferLayout_vec3_vec3_vec2
+        {
+            ShaderDataType::Float3,
+            ShaderDataType::Float3,
+            ShaderDataType::Float2
+        };
+
         std::shared_ptr<std::vector<float>> vertices = std::make_shared<std::vector<float>>(); 
         std::shared_ptr<std::vector<unsigned int>> indices = std::make_shared<std::vector<unsigned int>>();
 
@@ -301,6 +309,7 @@ namespace AiryEngine {
                         std::shared_ptr<Mesh> new_mesh = std::make_shared<Mesh>(
                             vertices,
                             indices,
+                            bufferLayout_vec3_vec3_vec2,
                             mesh_material
                         );
                         if (mesh_material->has_duffuse_map)
@@ -381,6 +390,7 @@ namespace AiryEngine {
                 std::shared_ptr<Mesh> new_mesh = std::make_shared<Mesh>(
                     vertices,
                     indices,
+                    bufferLayout_vec3_vec3_vec2,
                     mesh_material
                 );
                 if (mesh_material->has_duffuse_map)

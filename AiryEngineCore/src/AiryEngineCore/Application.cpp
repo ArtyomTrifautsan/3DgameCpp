@@ -95,7 +95,7 @@ namespace AiryEngine {
 
         //this->resource_manager = std::make_shared<ResourceManager>(this->path_to_executable);
         this->resource_manager = _resource_manager;
-        this->camera = std::make_shared<Camera>(glm::vec3(0.0f, 2.0f, -5.0f), glm::vec3(25.0f, 0.0f, 0.0f));
+        this->camera = std::make_shared<Camera>(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
         // Renderer::init(this->resource_manager);
     }
@@ -198,22 +198,29 @@ namespace AiryEngine {
         float frame = 0.0;
         Renderer_OpenGL::enable_depth_testing();
         // Renderer_OpenGL::enable_alpha_channel();
+        // LOG_INFO("Перед главным циклом");
         while (!this->closeWindow)
         {
+            // LOG_INFO("Начало цикла");
             Renderer_OpenGL::before_render();
-
+            // LOG_INFO("1");
             frame += 0.01;
 
             on_update();
+            // LOG_INFO("После он_апдейт");
             on_draw();
+            // LOG_INFO("После он_дроу");
 
             UIModule::on_window_draw_begin();
             on_ui_draw();
             UIModule::on_window_draw_end();
+            // LOG_INFO("Нарисовали Юай");
 
             this->window->on_update();
+            // LOG_INFO("После он_апдейт для виндовса");
 
             this->fps_keeper->keep_fps();
+            // LOG_INFO("Поддерживаем ФПС");
             // FpsKeeper::keep_fps();
         }
 
