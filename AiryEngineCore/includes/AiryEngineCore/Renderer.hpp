@@ -4,6 +4,8 @@
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 
+#include "AiryEngineCore/Rendering/OpenGL/Model3D.hpp"
+
 #include <memory>
 
 namespace AiryEngine
@@ -28,6 +30,9 @@ namespace AiryEngine
         void render_model3D(class Camera& camera, std::shared_ptr<Model3D> model);
         void render_collision_model(class Camera& camera, std::shared_ptr<Model3D> model);
         void render_light_model(class Camera& camera, std::shared_ptr<Model3D> model);
+
+        void render_cube_mesh(class Camera& camera, std::shared_ptr<CubeMesh> mesh);
+        void send_cube_mesh_model_matrix_to_shader(std::shared_ptr<CubeMesh> mesh);
 
         glm::vec3 get_light_source_position() { return light_source_position; }
         glm::vec3 get_light_source_color() { return light_source_color; }

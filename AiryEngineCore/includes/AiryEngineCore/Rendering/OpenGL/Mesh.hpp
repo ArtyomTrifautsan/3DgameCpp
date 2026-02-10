@@ -6,6 +6,8 @@
 
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
+#include <glm/gtc/quaternion.hpp>
+// #include <glm/gtx/quaternion.hpp>
 
 
 namespace AiryEngine {
@@ -97,6 +99,29 @@ namespace AiryEngine {
         float shininess = 32.0f;        // Temporary solution
 
         void setup_render_data_mesh(const BufferLayout& layout);
-}; 
+    }; 
+
+
+    class CubeMesh : public Mesh
+    {
+    public:
+        CubeMesh(std::shared_ptr<std::vector<float>> vertices, 
+                std::shared_ptr<std::vector<unsigned int>> indices,
+                const BufferLayout& layout,
+                std::shared_ptr<Material> material) 
+            : Mesh(vertices, indices, layout, material) {}
+        // Установка поворота через углы Эйлера (для обратной совместимости)
+        void set_rotate(float angle_x, float angle_y, float angle_z);
+        
+        // Установка поворота вокруг произвольной оси (основной метод)
+        void set_rotation_axis_angle(float angle_degrees, const glm::vec3& axis);
+        
+        // Получение текущего кватерниона вращения
+        glm::quat get_rotation() const { return rotation; }
+
+    private:
+        // Заменяем float rotate[3] на кватернион
+        glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f); // identity quaternion
+    };
 
 }

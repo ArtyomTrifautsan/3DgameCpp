@@ -147,7 +147,7 @@ namespace AiryEngine {
     };
     std::shared_ptr<std::vector<unsigned int>> studing_cube_indices = std::make_shared<std::vector<unsigned int>>(std::move(__temp2));
 
-    std::shared_ptr<Model3D> create_model_from_points()
+    std::shared_ptr<CubeMesh> create_cube_mesh_from_points()
     {
         BufferLayout bufferLayout_vec3
         {
@@ -156,15 +156,16 @@ namespace AiryEngine {
 
         std::shared_ptr<Material> material = std::make_shared<Material>();
 
-        std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(
+        // std::shared_ptr<CubeMesh> mesh = std::make_shared<CubeMesh>(
+        return std::make_shared<CubeMesh>(
             studing_cube_vertices,
             studing_cube_indices,
             bufferLayout_vec3,
             material
         );
 
-        std::vector<std::shared_ptr<Mesh>> _meshes = { mesh };
+        // std::vector<std::shared_ptr<CubeMesh>> _meshes = { mesh };
 
-        return std::make_shared<Model3D>(_meshes);
+        // return std::make_shared<Model3D>(_meshes);
     }
 }

@@ -6,6 +6,8 @@
 
 #include <glm/vec3.hpp>
 
+#include "AiryEngineCore/Rendering/OpenGL/Mesh.hpp"
+
 
 namespace AiryEngine {
 
@@ -57,6 +59,6 @@ namespace AiryEngine {
         float translate[3] = { 0.0f, 0.0f, 0.0f };
     };
 
-    std::shared_ptr<Model3D> create_model_from_points();
-    
+    std::shared_ptr<CubeMesh> create_cube_mesh_from_points();
+
 }

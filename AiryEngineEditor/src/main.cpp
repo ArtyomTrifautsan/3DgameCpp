@@ -3,6 +3,7 @@
 #include <memory>
 #include <imgui/imgui.h>
 #include <glm/trigonometric.hpp>
+#include <glm/gtc/type_ptr.hpp>
 using std::cout;
 using std::endl;
 
@@ -27,9 +28,11 @@ public:
     float camera_position[3] = {0, 0, 0};
     float camera_rotation[3] = {0, 0, 0};
     float m_cube_color[3] = {0, 0, 0};
+    glm::vec3 cube_rotation_axis = { 0,0,0 };
+    float cube_rotation_angle = 0.0f;
 
     std::shared_ptr<AiryEngine::Renderer> m_renderer = nullptr;
-    std::shared_ptr<AiryEngine::Model3D> m_studing_cube = nullptr;
+    std::shared_ptr<AiryEngine::CubeMesh> m_studing_cube = nullptr;
     std::shared_ptr<AiryEngine::ShaderProgram> m_shader = nullptr;
 
     virtual void on_start(std::shared_ptr<AiryEngine::ResourceManager> resource_manager) override
@@ -43,7 +46,7 @@ public:
         }
         // cout << "Перед созданием модели" <<std::endl;
         m_renderer = std::make_shared<AiryEngine::Renderer>();
-        m_studing_cube = AiryEngine::create_model_from_points();
+        m_studing_cube = AiryEngine::create_cube_mesh_from_points();
         // cout << "После" <<std::endl;
     }
 
@@ -165,7 +168,8 @@ public:
             // cout << "Проблема: m_shader == nullptr" <<std::endl;
         m_renderer->use_shader(m_shader);
         // cout << "Прицепили шейдер" <<std::endl;
-        m_renderer->render_model3D(*camera, m_studing_cube);
+        // m_renderer->render_model3D(*camera, m_studing_cube);
+        m_renderer->render_cube_mesh(*camera, m_studing_cube);
         // glm::vec3 center_of_cube = m_studing_cube->get_translate();
         // cout << "Нарисовали куб с центром в точке (" << center_of_cube[0] << ", " << center_of_cube[1] << ", " << center_of_cube[2] << ")." << std::endl;
     }
@@ -181,6 +185,7 @@ public:
         camera_rotation[2] = camera->get_camera_rotation().z;
 
         ImGui::Begin("Editor");
+
         if (ImGui::SliderFloat3("camera position", camera_position, -10.0f, 10.0f))
         {
             camera->set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
@@ -196,6 +201,19 @@ public:
             m_studing_cube->set_diffuse_color(m_cube_color[0], m_cube_color[1], m_cube_color[2]);
             // camera->set_rotation(glm::vec3(camera_rotation[0], camera_rotation[1], camera_rotation[2]));
         }
+
+        if (ImGui::InputFloat3("Cube rotation axis", glm::value_ptr(cube_rotation_axis)))
+        {
+            // camera->set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
+            m_studing_cube->set_rotation_axis_angle(cube_rotation_angle, cube_rotation_axis);
+        }
+
+        if (ImGui::SliderFloat("Cube rotation angle", &cube_rotation_angle, -180.0f, 180.0f))
+        {
+            // camera->set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
+            m_studing_cube->set_rotation_axis_angle(cube_rotation_angle, cube_rotation_axis);
+        }
+
         ImGui::End();
     }   
 

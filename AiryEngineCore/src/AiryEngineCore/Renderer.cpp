@@ -63,15 +63,8 @@ namespace AiryEngine {
     void Renderer::render_model3D(class Camera& camera, std::shared_ptr<Model3D> model)
     {
         std::vector<std::shared_ptr<Mesh>> model_meshes = model->get_meshes();
-        // std::cout << "Mehses from render_model3D(): " << model_meshes.size() << std::endl;
         for (std::shared_ptr<Mesh> current_mesh : model_meshes) 
         {
-            // if (current_mesh->get_material()->has_duffuse_map)
-            // if (current_mesh->get_has_texture())
-                // std::cout << "Draw mesh with texture" << std::endl;
-                // std::cout << "map_Kd from render_model3D(): " << current_mesh->get_material()->diffuse_map << std::endl;
-
-
             render_mesh(camera, current_mesh);
         }
     }
@@ -334,32 +327,15 @@ namespace AiryEngine {
 
     void Renderer::render_mesh(class Camera& camera, std::shared_ptr<Mesh> mesh)
     {
-        // std::cout << "Начали рендерить меш" << std::endl;
-
         m_shader->bind();
-
-        // std::cout << "Забиндили шейдер" << std::endl;
-
         mesh->get_vertex_array()->bind();
 
-        // std::cout << "Забиндили вертексный массив" << std::endl;
-
         send_uniform_data_to_shader(camera, mesh);
-
-        // std::cout << "Отправили данные на шейдер" << std::endl;
-
         send_model_matrix_to_shader(mesh);
-
-        // std::cout << "Отправили модел матрикс на шейдер" << std::endl;
-
         Renderer_OpenGL::draw_vertex_elements(*mesh->get_vertex_array());
-
-        // std::cout << "Нарисовали" << std::endl;
         
         mesh->get_vertex_array()->unbind();
         m_shader->unbind();
-
-        // std::cout << "Конец" << std::endl;
     }
 
     void Renderer::render_collision_model(class Camera& camera, std::shared_ptr<Model3D> model)
@@ -519,6 +495,42 @@ namespace AiryEngine {
         Renderer_OpenGL::draw_vertex_elements(*mesh->get_vertex_array());
         
         mesh->get_vertex_array()->unbind();
+    }
+
+    void Renderer::render_cube_mesh(class Camera& camera, std::shared_ptr<CubeMesh> mesh)
+    {
+        m_shader->bind();
+        mesh->get_vertex_array()->bind();
+
+        std::shared_ptr<Material> mesh_material = mesh->get_material();
+
+        m_shader->set_matrix4("view_projection_matrix", camera.get_view_projection_matrix());
+        m_shader->set_vec3("color", mesh_material->diffuse_color);
+
+        send_cube_mesh_model_matrix_to_shader(mesh);
+        Renderer_OpenGL::draw_vertex_elements(*mesh->get_vertex_array());
+
+        mesh->get_vertex_array()->unbind();
+        m_shader->unbind();
+    }
+
+    void Renderer::send_cube_mesh_model_matrix_to_shader(std::shared_ptr<CubeMesh> mesh)
+    {
+        // Получаем параметры трансформации
+        float scale_arr[3], translate_arr[3];
+        mesh->get_scale(scale_arr);
+        mesh->get_translate(translate_arr);
+        glm::quat rotation = mesh->get_rotation();
+
+        // Формируем матрицу в порядке: Scale → Rotate → Translate
+        glm::mat4 model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, 
+            glm::vec3(translate_arr[0], translate_arr[1], translate_arr[2]));
+        model_matrix = model_matrix * glm::mat4_cast(rotation); // quat → mat4
+        model_matrix = glm::scale(model_matrix, 
+            glm::vec3(scale_arr[0], scale_arr[1], scale_arr[2]));
+
+        m_shader->set_matrix4("model_matrix", model_matrix);
     }
 
     void Renderer::set_ambient_factor(float factor)

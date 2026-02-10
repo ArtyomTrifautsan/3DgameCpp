@@ -16,18 +16,6 @@
 
 namespace AiryEngine {
 
-    Mesh::Mesh(std::shared_ptr<std::vector<float>> vertices, 
-                std::shared_ptr<std::vector<unsigned int>> indices,
-                const BufferLayout& layout,
-                std::shared_ptr<Material> material)
-    {
-        this->vertices = vertices;
-        this->indices = indices;
-        this->material = material;
-
-        setup_render_data_mesh(layout);
-    }
-
     // void Mesh::setup_render_data_mesh()
     // {
     //     BufferLayout bufferLayout_vec3_vec3_vec2
@@ -46,6 +34,17 @@ namespace AiryEngine {
     //     this->vertex_array->unbind();
     // }
 
+    Mesh::Mesh(std::shared_ptr<std::vector<float>> vertices, 
+                std::shared_ptr<std::vector<unsigned int>> indices,
+                const BufferLayout& layout,
+                std::shared_ptr<Material> material)
+    {
+        this->vertices = vertices;
+        this->indices = indices;
+        this->material = material;
+
+        setup_render_data_mesh(layout);
+    }
 
     void Mesh::setup_render_data_mesh(const BufferLayout& layout)
     {
@@ -157,4 +156,22 @@ namespace AiryEngine {
     //     _translate[2] = this->translate[2];
     // }
 
+
+
+
+    void CubeMesh::set_rotate(float angle_x, float angle_y, float angle_z)
+    {
+        // Конвертируем углы Эйлера в кватернион (важно: порядок применения — ZYX)
+        rotation = glm::quat(glm::vec3(
+            glm::radians(angle_x),
+            glm::radians(angle_y),
+            glm::radians(angle_z)
+        ));
+    }
+
+    void CubeMesh::set_rotation_axis_angle(float angle_degrees, const glm::vec3& axis)
+    {
+        if (glm::length(axis) < 1e-6f) return; // защита от нулевого вектора
+        rotation = glm::angleAxis(glm::radians(angle_degrees), glm::normalize(axis));
+    }
 }
