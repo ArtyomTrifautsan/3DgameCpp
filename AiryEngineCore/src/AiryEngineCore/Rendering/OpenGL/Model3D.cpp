@@ -168,4 +168,284 @@ namespace AiryEngine {
 
         // return std::make_shared<Model3D>(_meshes);
     }
+
+
+
+    struct MeshData {
+        std::shared_ptr<std::vector<float>> vertices;  // [x0,y0,z0, x1,y1,z1, ...]
+        std::shared_ptr<std::vector<unsigned int>> indices;  // Пары индексов для GL_LINES
+    };
+
+    MeshData generateCubeWireframe(const int subdivisions = 4)
+    {
+        const int squaresPerEdge = subdivisions;
+        const int vertsPerEdge = subdivisions + 1;
+        MeshData mesh;
+        mesh.vertices = std::make_shared<std::vector<float>>();
+        mesh.indices = std::make_shared<std::vector<unsigned int>>();
+
+        const int verticesPerEdge = squaresPerEdge + 1;
+        const float step = 2.0f / squaresPerEdge; // Куб размером 2x2x2, центрирован в (0,0,0)
+
+        // Обработка 6 граней куба
+        for (int face = 0; face < 6; ++face) {
+            const size_t baseIndex = mesh.vertices->size() / 3; // Базовый индекс текущей грани (в вершинах)
+
+            // Генерация вершин для текущей грани
+            for (int i = 0; i < verticesPerEdge; ++i) {
+                float v = -1.0f + i * step;  // Координата вдоль оси V
+                for (int j = 0; j < verticesPerEdge; ++j) {
+                    float u = -1.0f + j * step;  // Координата вдоль оси U
+
+                    float x, y, z;
+                    switch (face) {
+                        case 0: // Правая грань (+X), снаружи смотрим в -X
+                            x =  1.0f;
+                            y =  u;
+                            z =  v;
+                            break;
+                        case 1: // Левая грань (-X), снаружи смотрим в +X
+                            x = -1.0f;
+                            y = -u;  // Инверсия для сохранения CCW
+                            z =  v;
+                            break;
+                        case 2: // Верхняя грань (+Y), снаружи смотрим в -Y
+                            x =  u;
+                            y =  1.0f;
+                            z = -v;  // Инверсия для сохранения CCW
+                            break;
+                        case 3: // Нижняя грань (-Y), снаружи смотрим в +Y
+                            x =  u;
+                            y = -1.0f;
+                            z =  v;
+                            break;
+                        case 4: // Передняя грань (+Z), снаружи смотрим в -Z
+                            x =  u;
+                            y =  v;
+                            z =  1.0f;
+                            break;
+                        case 5: // Задняя грань (-Z), снаружи смотрим в +Z
+                            x = -u;  // Инверсия для сохранения CCW
+                            y =  v;
+                            z = -1.0f;
+                            break;
+                        default:
+                            continue;
+                    }
+                    // Добавляем вершину как три отдельных float
+                    mesh.vertices->push_back(x);
+                    mesh.vertices->push_back(y);
+                    mesh.vertices->push_back(z);
+                }
+            }
+
+            // Генерация индексов для текущей грани
+            for (int i = 0; i < squaresPerEdge; ++i) {
+                for (int j = 0; j < squaresPerEdge; ++j) {
+                    unsigned int v0 = static_cast<unsigned int>(baseIndex + i * verticesPerEdge + j);
+                    unsigned int v1 = static_cast<unsigned int>(baseIndex + i * verticesPerEdge + (j + 1));
+                    unsigned int v2 = static_cast<unsigned int>(baseIndex + (i + 1) * verticesPerEdge + (j + 1));
+                    unsigned int v3 = static_cast<unsigned int>(baseIndex + (i + 1) * verticesPerEdge + j);
+
+                    // Два треугольника на квадрат (обход против часовой стрелки)
+                    if (face < 6)
+                    {
+                        mesh.indices->push_back(v0);
+                        mesh.indices->push_back(v1);
+                        mesh.indices->push_back(v2);
+
+                        mesh.indices->push_back(v0);
+                        mesh.indices->push_back(v2);
+                        mesh.indices->push_back(v3);
+                    }
+                    else
+                    {
+                        mesh.indices->push_back(v2);
+                        mesh.indices->push_back(v1);
+                        mesh.indices->push_back(v0);
+
+                        mesh.indices->push_back(v3);
+                        mesh.indices->push_back(v2);
+                        mesh.indices->push_back(v0);
+                    }
+                }
+            }
+        }
+
+        // std::cout << 
+
+        return mesh;
+    }
+
+    std::shared_ptr<CubeMesh> create_cube_mesh_from_points_2()
+    {
+        BufferLayout bufferLayout_vec3
+        {
+            ShaderDataType::Float3
+        };
+
+        MeshData mesh = generateCubeWireframe(4);
+
+        std::shared_ptr<Material> material = std::make_shared<Material>();
+
+        // std::shared_ptr<CubeMesh> mesh = std::make_shared<CubeMesh>(
+        return std::make_shared<CubeMesh>(
+            mesh.vertices,
+            mesh.indices,
+            bufferLayout_vec3,
+            material
+        );
+
+        // std::vector<std::shared_ptr<CubeMesh>> _meshes = { mesh };
+
+        // return std::make_shared<Model3D>(_meshes);
+    }
+
+    
+    /*
+
+    MeshData generateCubeWireframe(const int subdivisions = 4)
+    {
+        const int squaresPerEdge = subdivisions;
+        const int vertsPerEdge = subdivisions + 1;
+        MeshData mesh;
+        mesh.vertices = std::make_shared<std::vector<float>>();
+        mesh.indices = std::make_shared<std::vector<unsigned int>>();
+
+        const int verticesPerEdge = squaresPerEdge + 1;
+        const float step = 2.0f / squaresPerEdge; // Куб размером 2x2x2, центрирован в (0,0,0)
+
+        // Обработка 6 граней куба
+        for (int face = 0; face < 6; ++face) {
+            const size_t baseIndex = mesh.vertices->size() / 6; // Базовый индекс текущей грани (в вершинах)
+
+            // Нормаль для текущей грани куба
+            float faceNx, faceNy, faceNz;
+            switch (face) {
+                case 0: faceNx =  1.0f; faceNy =  0.0f; faceNz =  0.0f; break; // +X
+                case 1: faceNx = -1.0f; faceNy =  0.0f; faceNz =  0.0f; break; // -X
+                case 2: faceNx =  0.0f; faceNy =  1.0f; faceNz =  0.0f; break; // +Y
+                case 3: faceNx =  0.0f; faceNy = -1.0f; faceNz =  0.0f; break; // -Y
+                case 4: faceNx =  0.0f; faceNy =  0.0f; faceNz =  1.0f; break; // +Z
+                case 5: faceNx =  0.0f; faceNy =  0.0f; faceNz = -1.0f; break; // -Z
+                default: faceNx = 0.0f; faceNy = 0.0f; faceNz = 0.0f; break;
+            }
+
+            // Генерация вершин для текущей грани
+            for (int i = 0; i < verticesPerEdge; ++i) {
+                float v = -1.0f + i * step;  // Координата вдоль оси V
+                for (int j = 0; j < verticesPerEdge; ++j) {
+                    float u = -1.0f + j * step;  // Координата вдоль оси U
+
+                    float x, y, z;
+                    switch (face) {
+                        case 0: // Правая грань (+X), снаружи смотрим в -X
+                            x =  1.0f;
+                            y =  u;
+                            z =  v;
+                            break;
+                        case 1: // Левая грань (-X), снаружи смотрим в +X
+                            x = -1.0f;
+                            y = -u;  // Инверсия для сохранения CCW
+                            z =  v;
+                            break;
+                        case 2: // Верхняя грань (+Y), снаружи смотрим в -Y
+                            x =  u;
+                            y =  1.0f;
+                            z = -v;  // Инверсия для сохранения CCW
+                            break;
+                        case 3: // Нижняя грань (-Y), снаружи смотрим в +Y
+                            x =  u;
+                            y = -1.0f;
+                            z =  v;
+                            break;
+                        case 4: // Передняя грань (+Z), снаружи смотрим в -Z
+                            x =  u;
+                            y =  v;
+                            z =  1.0f;
+                            break;
+                        case 5: // Задняя грань (-Z), снаружи смотрим в +Z
+                            x = -u;  // Инверсия для сохранения CCW
+                            y =  v;
+                            z = -1.0f;
+                            break;
+                        default:
+                            continue;
+                    }
+                    // Добавляем вершину как три отдельных float
+                    mesh.vertices->push_back(x);
+                    mesh.vertices->push_back(y);
+                    mesh.vertices->push_back(z);
+
+                    // Нормаль вершины (пока — нормаль грани)
+                    mesh.vertices->push_back(faceNx);
+                    mesh.vertices->push_back(faceNy);
+                    mesh.vertices->push_back(faceNz);
+                }
+            }
+
+            // Генерация индексов для текущей грани
+            for (int i = 0; i < squaresPerEdge; ++i) {
+                for (int j = 0; j < squaresPerEdge; ++j) {
+                    unsigned int v0 = static_cast<unsigned int>(baseIndex + i * verticesPerEdge + j);
+                    unsigned int v1 = static_cast<unsigned int>(baseIndex + i * verticesPerEdge + (j + 1));
+                    unsigned int v2 = static_cast<unsigned int>(baseIndex + (i + 1) * verticesPerEdge + (j + 1));
+                    unsigned int v3 = static_cast<unsigned int>(baseIndex + (i + 1) * verticesPerEdge + j);
+
+                    // Два треугольника на квадрат (обход против часовой стрелки)
+                    if (face < 6)
+                    {
+                        mesh.indices->push_back(v0);
+                        mesh.indices->push_back(v1);
+                        mesh.indices->push_back(v2);
+
+                        mesh.indices->push_back(v0);
+                        mesh.indices->push_back(v2);
+                        mesh.indices->push_back(v3);
+                    }
+                    else
+                    {
+                        mesh.indices->push_back(v2);
+                        mesh.indices->push_back(v1);
+                        mesh.indices->push_back(v0);
+
+                        mesh.indices->push_back(v3);
+                        mesh.indices->push_back(v2);
+                        mesh.indices->push_back(v0);
+                    }
+                }
+            }
+        }
+
+        // std::cout << 
+
+        return mesh;
+    }
+
+    std::shared_ptr<CubeMesh> create_cube_mesh_from_points_2()
+    {
+        BufferLayout bufferLayout_vec3
+        {
+            ShaderDataType::Float3,
+            ShaderDataType::Float3
+        };
+
+        MeshData mesh = generateCubeWireframe(4);
+
+        std::shared_ptr<Material> material = std::make_shared<Material>();
+
+        // std::shared_ptr<CubeMesh> mesh = std::make_shared<CubeMesh>(
+        return std::make_shared<CubeMesh>(
+            mesh.vertices,
+            mesh.indices,
+            bufferLayout_vec3,
+            material
+        );
+
+        // std::vector<std::shared_ptr<CubeMesh>> _meshes = { mesh };
+
+        // return std::make_shared<Model3D>(_meshes);
+    }
+
+    */
 }

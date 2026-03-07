@@ -3,9 +3,11 @@
 // #include "AiryEngineCore/ResourceManaging/ResourceManager.hpp"
 // #include "AiryEngineCore/Rendering/OpenGL/Model3D.hpp"
 
+// #include <glad/glad.h>
+
 
 struct GLFWwindow;
-
+// extern const unsigned int GL_TRIANGLES;
 //class Camera;
 
 namespace AiryEngine {
@@ -35,6 +37,7 @@ namespace AiryEngine {
         static bool init(GLFWwindow* window);  //  Нельзя убирать этот метод, он инициализирует glad в Window.cpp
 
         static void draw_vertex_elements(const VertexArray& vertex_array);
+        static void draw_vertex_elements_lines(const VertexArray& vertex_array);
         static void set_clear_color(const float r, const float g, const float b, const float a);
         static void clear();
         static void set_viewport(const unsigned int width, const unsigned int height, const unsigned int left_offset = 0, const unsigned bottom_offset = 0);

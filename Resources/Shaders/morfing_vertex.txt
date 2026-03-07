@@ -1,0 +1,17 @@
+#version 330 core
+
+layout(location = 0) in vec3 aPos;
+
+uniform mat4 model_matrix;
+uniform mat4 view_projection_matrix;
+
+out vec3 v_pos;
+
+uniform float uMorphFactor; // 0.0 = куб, 1.0 = сфера
+
+void main()
+{
+    vec3 morphed = mix(aPos, normalize(aPos), uMorphFactor);
+    gl_Position = view_projection_matrix * model_matrix * vec4(morphed, 1.0);
+    v_pos = aPos;
+}

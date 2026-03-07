@@ -39,6 +39,10 @@ namespace AiryEngine {
 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);      // Технология рассчета прозрачности
 
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+        glCullFace(GL_BACK);
+
         return true;
     }
 
@@ -57,6 +61,14 @@ namespace AiryEngine {
     {
         vertex_array.bind();
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vertex_array.get_indices_count()), GL_UNSIGNED_INT, nullptr);
+        // glDrawElements(render_mode, static_cast<GLsizei>(vertex_array.get_indices_count()), GL_UNSIGNED_INT, nullptr);
+    }
+
+    void Renderer_OpenGL::draw_vertex_elements_lines(const VertexArray& vertex_array)
+    {
+        vertex_array.bind();
+        glDrawElements(GL_LINES, static_cast<GLsizei>(vertex_array.get_indices_count()), GL_UNSIGNED_INT, nullptr);
+        // glDrawElements(render_mode, static_cast<GLsizei>(vertex_array.get_indices_count()), GL_UNSIGNED_INT, nullptr);
     }
 
     void Renderer_OpenGL::set_clear_color(const float r, const float g, const float b, const float a) { glClearColor(r, g, b, a); }

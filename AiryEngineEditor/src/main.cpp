@@ -31,9 +31,16 @@ public:
     glm::vec3 cube_rotation_axis = { 0,0,0 };
     float cube_rotation_angle = 0.0f;
 
+    bool checkbox_task_1 = false;
+    bool checkbox_task_2 = true;
+
+    float uMorphFactor = 0.0f;
+
     std::shared_ptr<AiryEngine::Renderer> m_renderer = nullptr;
-    std::shared_ptr<AiryEngine::CubeMesh> m_studing_cube = nullptr;
     std::shared_ptr<AiryEngine::ShaderProgram> m_shader = nullptr;
+    std::shared_ptr<AiryEngine::CubeMesh> m_studing_cube = nullptr;
+    std::shared_ptr<AiryEngine::ShaderProgram> m_shader_2 = nullptr;
+    std::shared_ptr<AiryEngine::CubeMesh> m_studing_cube_2 = nullptr;
 
     virtual void on_start(std::shared_ptr<AiryEngine::ResourceManager> resource_manager) override
     {
@@ -44,10 +51,19 @@ public:
             // LOG_CRITICAL("Failed to compile Default Shader Program");
             cout << "Failed to compile Default Shader Program" <<std::endl;
         }
-        // cout << "Перед созданием модели" <<std::endl;
+
+        m_shader_2 = resource_manager->load_shaders("shader_for_cube_2", "morfing_vertex.txt", "morfing_fragment.txt");
+        if (!m_shader->is_compiled()) 
+        {
+            // LOG_CRITICAL("Failed to compile Default Shader Program");
+            cout << "Failed to compile Default Shader Program 2" <<std::endl;
+        }
+
         m_renderer = std::make_shared<AiryEngine::Renderer>();
         m_studing_cube = AiryEngine::create_cube_mesh_from_points();
-        // cout << "После" <<std::endl;
+        cout << "Перед созданием модели" <<std::endl;
+        m_studing_cube_2 = AiryEngine::create_cube_mesh_from_points_2();
+        cout << "После" <<std::endl;
     }
 
     virtual void on_update() override
@@ -166,10 +182,21 @@ public:
         // cout << "Начали он_дроу" <<std::endl;
         // if (m_shader == nullptr)
             // cout << "Проблема: m_shader == nullptr" <<std::endl;
-        m_renderer->use_shader(m_shader);
+
+        if (checkbox_task_1)
+        {
+            m_renderer->use_shader(m_shader);
+            m_renderer->render_cube_mesh(*camera, m_studing_cube);
+        }
+
+
         // cout << "Прицепили шейдер" <<std::endl;
         // m_renderer->render_model3D(*camera, m_studing_cube);
-        m_renderer->render_cube_mesh(*camera, m_studing_cube);
+        if (checkbox_task_2)
+        {
+            m_renderer->use_shader(m_shader_2);
+            m_renderer->render_cube_mesh_2(*camera, m_studing_cube_2, uMorphFactor);
+        }
         // glm::vec3 center_of_cube = m_studing_cube->get_translate();
         // cout << "Нарисовали куб с центром в точке (" << center_of_cube[0] << ", " << center_of_cube[1] << ", " << center_of_cube[2] << ")." << std::endl;
     }
@@ -196,22 +223,36 @@ public:
         }
         // ImGui::Checkbox("Perspective camera", &perspective_camera);
 
-        if (ImGui::SliderFloat3("Cube color", m_cube_color, 0.0f, 1.0f))
+        ImGui::Checkbox("Enable task 1", &checkbox_task_1);
+        if (checkbox_task_1)
         {
-            m_studing_cube->set_diffuse_color(m_cube_color[0], m_cube_color[1], m_cube_color[2]);
-            // camera->set_rotation(glm::vec3(camera_rotation[0], camera_rotation[1], camera_rotation[2]));
+            if (ImGui::SliderFloat3("Cube color", m_cube_color, 0.0f, 1.0f))
+            {
+                m_studing_cube->set_diffuse_color(m_cube_color[0], m_cube_color[1], m_cube_color[2]);
+                // camera->set_rotation(glm::vec3(camera_rotation[0], camera_rotation[1], camera_rotation[2]));
+            }
+
+            if (ImGui::InputFloat3("Cube rotation axis", glm::value_ptr(cube_rotation_axis)))
+            {
+                // camera->set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
+                m_studing_cube->set_rotation_axis_angle(cube_rotation_angle, cube_rotation_axis);
+            }
+
+            if (ImGui::SliderFloat("Cube rotation angle", &cube_rotation_angle, -180.0f, 180.0f))
+            {
+                // camera->set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
+                m_studing_cube->set_rotation_axis_angle(cube_rotation_angle, cube_rotation_axis);
+            }
         }
 
-        if (ImGui::InputFloat3("Cube rotation axis", glm::value_ptr(cube_rotation_axis)))
+        ImGui::Checkbox("Enable task 2", &checkbox_task_2);
+        if (checkbox_task_2)
         {
-            // camera->set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
-            m_studing_cube->set_rotation_axis_angle(cube_rotation_angle, cube_rotation_axis);
-        }
-
-        if (ImGui::SliderFloat("Cube rotation angle", &cube_rotation_angle, -180.0f, 180.0f))
-        {
-            // camera->set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
-            m_studing_cube->set_rotation_axis_angle(cube_rotation_angle, cube_rotation_axis);
+            if (ImGui::SliderFloat("Cube morphing factor", &uMorphFactor, 0.0f, 1.0f))
+            {
+                // camera->set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
+                // m_studing_cube_2->set_rotation_axis_angle(cube_rotation_angle, cube_rotation_axis);
+            }
         }
 
         ImGui::End();

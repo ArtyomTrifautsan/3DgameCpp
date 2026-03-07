@@ -197,7 +197,9 @@ namespace AiryEngine {
 
         float frame = 0.0;
         Renderer_OpenGL::enable_depth_testing();
-        // Renderer_OpenGL::enable_alpha_channel();
+        // Renderer_OpenGL::disable_depth_testing();
+        Renderer_OpenGL::enable_alpha_channel();
+        // Renderer_OpenGL::disable_alpha_channel();
         // LOG_INFO("Перед главным циклом");
         while (!this->closeWindow)
         {

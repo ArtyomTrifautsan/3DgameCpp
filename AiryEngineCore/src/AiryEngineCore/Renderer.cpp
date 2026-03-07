@@ -533,6 +533,25 @@ namespace AiryEngine {
         m_shader->set_matrix4("model_matrix", model_matrix);
     }
 
+    void Renderer::render_cube_mesh_2(class Camera& camera, std::shared_ptr<CubeMesh> mesh, float uMorphFactor)
+    {
+        m_shader->bind();
+        mesh->get_vertex_array()->bind();
+
+        std::shared_ptr<Material> mesh_material = mesh->get_material();
+
+        m_shader->set_matrix4("view_projection_matrix", camera.get_view_projection_matrix());
+        m_shader->set_vec3("color", mesh_material->diffuse_color);
+        m_shader->set_float("uMorphFactor", uMorphFactor);
+
+        send_cube_mesh_model_matrix_to_shader(mesh);
+        // Renderer_OpenGL::draw_vertex_elements_lines(*mesh->get_vertex_array());
+        Renderer_OpenGL::draw_vertex_elements(*mesh->get_vertex_array());
+
+        mesh->get_vertex_array()->unbind();
+        m_shader->unbind();
+    }
+
     void Renderer::set_ambient_factor(float factor)
     {
         this->ambient_factor = factor;
