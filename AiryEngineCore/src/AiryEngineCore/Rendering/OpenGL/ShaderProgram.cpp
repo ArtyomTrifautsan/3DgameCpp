@@ -117,6 +117,11 @@ namespace AiryEngine
         glUniformMatrix4fv(glGetUniformLocation(this->id, name), 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
+    void ShaderProgram::set_matrix3(const char* name, const glm::mat3& matrix) const
+    {
+        glUniformMatrix3fv(glGetUniformLocation(this->id, name), 1, GL_FALSE, glm::value_ptr(matrix));
+    }
+
     void ShaderProgram::set_vec3(const char* name, const glm::vec3& vector) const
     {
         glUniform3f(glGetUniformLocation(this->id, name), vector.x, vector.y, vector.z);

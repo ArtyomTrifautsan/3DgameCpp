@@ -176,6 +176,7 @@ namespace AiryEngine {
         std::shared_ptr<std::vector<unsigned int>> indices;  // Пары индексов для GL_LINES
     };
 
+    
     MeshData generateCubeWireframe(const int subdivisions = 4)
     {
         const int squaresPerEdge = subdivisions;
@@ -277,14 +278,14 @@ namespace AiryEngine {
         return mesh;
     }
 
-    std::shared_ptr<CubeMesh> create_cube_mesh_from_points_2()
+    std::shared_ptr<CubeMesh> create_cube_mesh_from_points_2(const int subdivisions)
     {
         BufferLayout bufferLayout_vec3
         {
             ShaderDataType::Float3
         };
 
-        MeshData mesh = generateCubeWireframe(4);
+        MeshData mesh = generateCubeWireframe(subdivisions);
 
         std::shared_ptr<Material> material = std::make_shared<Material>();
 
@@ -302,9 +303,11 @@ namespace AiryEngine {
     }
 
     
-    /*
 
-    MeshData generateCubeWireframe(const int subdivisions = 4)
+
+    
+
+    MeshData generateCubeWireframe3(const int subdivisions = 4)
     {
         const int squaresPerEdge = subdivisions;
         const int vertsPerEdge = subdivisions + 1;
@@ -422,7 +425,7 @@ namespace AiryEngine {
         return mesh;
     }
 
-    std::shared_ptr<CubeMesh> create_cube_mesh_from_points_2()
+    std::shared_ptr<CubeMesh> create_cube_mesh_from_points_3(const int subdivisions)
     {
         BufferLayout bufferLayout_vec3
         {
@@ -430,7 +433,7 @@ namespace AiryEngine {
             ShaderDataType::Float3
         };
 
-        MeshData mesh = generateCubeWireframe(4);
+        MeshData mesh = generateCubeWireframe3(subdivisions);
 
         std::shared_ptr<Material> material = std::make_shared<Material>();
 
@@ -447,5 +450,5 @@ namespace AiryEngine {
         // return std::make_shared<Model3D>(_meshes);
     }
 
-    */
+    
 }

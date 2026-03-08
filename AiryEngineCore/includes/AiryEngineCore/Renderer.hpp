@@ -33,7 +33,9 @@ namespace AiryEngine
 
         void render_cube_mesh(class Camera& camera, std::shared_ptr<CubeMesh> mesh);
         void render_cube_mesh_2(class Camera& camera, std::shared_ptr<CubeMesh> mesh, float uMorphFactor);
+        void render_cube_mesh_3(class Camera& camera, std::shared_ptr<CubeMesh> mesh);
         void send_cube_mesh_model_matrix_to_shader(std::shared_ptr<CubeMesh> mesh);
+        void send_cube_mesh_model_matrix_to_shader_3(std::shared_ptr<CubeMesh> mesh);
 
         glm::vec3 get_light_source_position() { return light_source_position; }
         glm::vec3 get_light_source_color() { return light_source_color; }

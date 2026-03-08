@@ -27,20 +27,48 @@ public:
 
     float camera_position[3] = {0, 0, 0};
     float camera_rotation[3] = {0, 0, 0};
+
+    std::shared_ptr<AiryEngine::Renderer> m_renderer = nullptr;
+
+    // Задача 1
+    bool checkbox_task_1 = false;
+    std::shared_ptr<AiryEngine::ShaderProgram> m_shader = nullptr;
+    std::shared_ptr<AiryEngine::CubeMesh> m_studing_cube = nullptr;
     float m_cube_color[3] = {0, 0, 0};
     glm::vec3 cube_rotation_axis = { 0,0,0 };
     float cube_rotation_angle = 0.0f;
 
-    bool checkbox_task_1 = false;
-    bool checkbox_task_2 = true;
-
-    float uMorphFactor = 0.0f;
-
-    std::shared_ptr<AiryEngine::Renderer> m_renderer = nullptr;
-    std::shared_ptr<AiryEngine::ShaderProgram> m_shader = nullptr;
-    std::shared_ptr<AiryEngine::CubeMesh> m_studing_cube = nullptr;
+    // Задача 2
+    bool checkbox_task_2 = false;
     std::shared_ptr<AiryEngine::ShaderProgram> m_shader_2 = nullptr;
     std::shared_ptr<AiryEngine::CubeMesh> m_studing_cube_2 = nullptr;
+    float uMorphFactor = 0.0f;
+
+    // Задача 3
+    bool checkbox_task_3 = true;
+    inline static int light_type = 0;  // 0 - точечный, 1 - направленный, 2 - прожектор
+    std::shared_ptr<AiryEngine::ShaderProgram> m_shader_3_1 = nullptr;
+    std::shared_ptr<AiryEngine::ShaderProgram> m_shader_3_2 = nullptr;
+    std::shared_ptr<AiryEngine::ShaderProgram> m_shader_3_3 = nullptr;
+    std::shared_ptr<AiryEngine::CubeMesh> m_studing_cube_3 = nullptr;
+    float cube_3_pos[3] = {0, 0, 0};
+    float cube_3_scale[3] = {1, 1, 1};
+    float cube_3_rotate[3] = {0, 0, 0};
+    float light_pos[3] = {0, 0, 0};
+    float light_dir[3] = {1, 0, 0};
+    float light_color[3] = {1, 1, 1};
+    float ambient_color[3] = {1, 1, 1};
+    float diffuse_color[3] = {1, 1, 1};
+    float specular_color[3] = {1, 1, 1};
+    float ambient_factor = 1;
+    float diffuse_factor = 1;
+    float specular_factor = 1;
+    float shininess = 30;
+    float attenuation[3] = {1, 1, 1};
+    float cutOff = 0;       // Внутренний угол (косинус)
+    float outerCutOff = 0;  // Внешний угол (косинус) для мягких краев
+
+
 
     virtual void on_start(std::shared_ptr<AiryEngine::ResourceManager> resource_manager) override
     {
@@ -59,11 +87,33 @@ public:
             cout << "Failed to compile Default Shader Program 2" <<std::endl;
         }
 
+        m_shader_3_1 = resource_manager->load_shaders("shader_for_task_3_1", "task3_vertex_point.txt", "task3_fragment_point.txt");
+        if (!m_shader->is_compiled()) 
+        {
+            // LOG_CRITICAL("Failed to compile Default Shader Program");
+            cout << "Failed to compile Shader Program for task 3" <<std::endl;
+        }
+
+        m_shader_3_2 = resource_manager->load_shaders("shader_for_task_3_2", "task3_vertex_directional.txt", "task3_fragment_point.txt");
+        if (!m_shader->is_compiled()) 
+        {
+            // LOG_CRITICAL("Failed to compile Default Shader Program");
+            cout << "Failed to compile Shader Program for task 3" <<std::endl;
+        }
+
+        m_shader_3_3 = resource_manager->load_shaders("shader_for_task_3_3", "task3_vertex_spot.txt", "task3_fragment_point.txt");
+        if (!m_shader->is_compiled()) 
+        {
+            // LOG_CRITICAL("Failed to compile Default Shader Program");
+            cout << "Failed to compile Shader Program for task 3" <<std::endl;
+        }
+
         m_renderer = std::make_shared<AiryEngine::Renderer>();
         m_studing_cube = AiryEngine::create_cube_mesh_from_points();
-        cout << "Перед созданием модели" <<std::endl;
-        m_studing_cube_2 = AiryEngine::create_cube_mesh_from_points_2();
-        cout << "После" <<std::endl;
+        m_studing_cube_2 = AiryEngine::create_cube_mesh_from_points_2(4);
+        // cout << "Перед созданием модели" <<std::endl;
+        m_studing_cube_3 = AiryEngine::create_cube_mesh_from_points_3(16);
+        // cout << "После" <<std::endl;
     }
 
     virtual void on_update() override
@@ -197,6 +247,125 @@ public:
             m_renderer->use_shader(m_shader_2);
             m_renderer->render_cube_mesh_2(*camera, m_studing_cube_2, uMorphFactor);
         }
+
+        if (checkbox_task_3)
+        {
+            if (light_type == 0)
+            {
+                m_renderer->use_shader(m_shader_3_1);
+                m_shader_3_1->bind();
+                m_shader_3_1->set_float("uMorphFactor", uMorphFactor);
+                m_shader_3_1->set_vec3("camera_pos", glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
+                m_shader_3_1->set_vec3("light_pos", glm::vec3(light_pos[0], light_pos[1], light_pos[2]));
+                m_shader_3_1->set_vec3("light_color", glm::vec3(light_color[0], light_color[1], light_color[2]));
+                // m_shader_3_1->set_vec3("ambient_color", glm::vec3(ambient_color[0], ambient_color[1], ambient_color[2]));
+                // m_shader_3_1->set_vec3("diffuse_color", glm::vec3(diffuse_color[0], diffuse_color[1], diffuse_color[2]));
+                // m_shader_3_1->set_vec3("specular_color", glm::vec3(specular_color[0], specular_color[1], specular_color[2]));
+                m_shader_3_1->set_float("ambient_factor", ambient_factor);
+                m_shader_3_1->set_float("diffuse_factor", diffuse_factor);
+                m_shader_3_1->set_float("specular_factor", specular_factor);
+                m_shader_3_1->set_float("shininess", shininess);
+                m_shader_3_1->set_vec3("attenuation", glm::vec3(attenuation[0], attenuation[1], attenuation[2]));
+
+                glm::vec3 cube_pos = {0, 0, 0};
+                glm::vec3 cube_scale = {0, 0, 0};
+
+                // std::cout << "cube pos 1 = (" << cube_pos[0] << "; " << cube_pos[1] << "; " << cube_pos[2] << ")" << std::endl;
+                // std::cout << "cube scale 1 = (" << cube_scale[0] << "; " << cube_scale[1] << "; " << cube_scale[2] << ")" << std::endl;
+
+                cube_pos = m_studing_cube_3->get_translate();
+                cube_scale = m_studing_cube_3->get_scale();
+
+                // std::cout << "cube pos 2 = (" << cube_pos[0] << "; " << cube_pos[1] << "; " << cube_pos[2] << ")" << std::endl;
+                // std::cout << "cube scale 2 = (" << cube_scale[0] << "; " << cube_scale[1] << "; " << cube_scale[2] << ")" << std::endl;
+
+                m_shader_3_1->set_vec3("ambient_color", glm::vec3(light_color[0], light_color[1], light_color[2]));
+                m_shader_3_1->set_vec3("diffuse_color", glm::vec3(light_color[0], light_color[1], light_color[2]));
+                m_shader_3_1->set_vec3("specular_color", glm::vec3(light_color[0], light_color[1], light_color[2]));
+                m_studing_cube_3->set_translate(light_pos[0], light_pos[1], light_pos[2]);
+                m_studing_cube_3->set_scale(0.2, 0.2, 0.2);
+                m_renderer->render_cube_mesh_3(*camera, m_studing_cube_3);
+
+                // std::cout << "cube pos 3 = (" << cube_pos[0] << "; " << cube_pos[1] << "; " << cube_pos[2] << ")" << std::endl;
+                // std::cout << "cube scale 3 = (" << cube_scale[0] << "; " << cube_scale[1] << "; " << cube_scale[2] << ")" << std::endl;
+
+                m_shader_3_1->bind();
+                m_shader_3_1->set_vec3("ambient_color", glm::vec3(ambient_color[0], ambient_color[1], ambient_color[2]));
+                m_shader_3_1->set_vec3("diffuse_color", glm::vec3(diffuse_color[0], diffuse_color[1], diffuse_color[2]));
+                m_shader_3_1->set_vec3("specular_color", glm::vec3(specular_color[0], specular_color[1], specular_color[2]));
+                m_studing_cube_3->set_translate(cube_pos[0], cube_pos[1], cube_pos[2]);
+                m_studing_cube_3->set_scale(cube_scale[0], cube_scale[1], cube_scale[2]);
+                m_renderer->render_cube_mesh_3(*camera, m_studing_cube_3);
+
+                // std::cout << "cube pos 4 = (" << cube_pos[0] << "; " << cube_pos[1] << "; " << cube_pos[2] << ")" << std::endl;
+                // std::cout << "cube scale 4 = (" << cube_scale[0] << "; " << cube_scale[1] << "; " << cube_scale[2] << ")" << std::endl;
+            }
+
+            if (light_type == 1)
+            {
+                m_renderer->use_shader(m_shader_3_2);
+                m_shader_3_2->bind();
+                m_shader_3_2->set_float("uMorphFactor", uMorphFactor);
+                m_shader_3_2->set_vec3("camera_pos", glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
+                m_shader_3_2->set_vec3("light_dir", glm::vec3(light_dir[0], light_dir[1], light_dir[2]));
+                m_shader_3_2->set_vec3("light_color", glm::vec3(light_color[0], light_color[1], light_color[2]));
+                // m_shader_3_2->set_vec3("ambient_color", glm::vec3(ambient_color[0], ambient_color[1], ambient_color[2]));
+                // m_shader_3_2->set_vec3("diffuse_color", glm::vec3(diffuse_color[0], diffuse_color[1], diffuse_color[2]));
+                // m_shader_3_2->set_vec3("specular_color", glm::vec3(specular_color[0], specular_color[1], specular_color[2]));
+                m_shader_3_2->set_float("ambient_factor", ambient_factor);
+                m_shader_3_2->set_float("diffuse_factor", diffuse_factor);
+                m_shader_3_2->set_float("specular_factor", specular_factor);
+                m_shader_3_2->set_float("shininess", shininess);
+                m_shader_3_2->set_vec3("attenuation", glm::vec3(attenuation[0], attenuation[1], attenuation[2]));
+
+                m_shader_3_2->bind();
+                m_renderer->render_cube_mesh_3(*camera, m_studing_cube_3);
+            }
+
+            if (light_type == 2)
+            {
+                m_renderer->use_shader(m_shader_3_3);
+                m_shader_3_3->bind();
+                m_shader_3_3->set_float("uMorphFactor", uMorphFactor);
+                m_shader_3_3->set_vec3("camera_pos", glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
+                m_shader_3_3->set_vec3("light_pos", glm::vec3(light_pos[0], light_pos[1], light_pos[2]));
+                m_shader_3_3->set_vec3("light_dir", glm::vec3(light_dir[0], light_dir[1], light_dir[2]));
+                m_shader_3_3->set_vec3("light_color", glm::vec3(light_color[0], light_color[1], light_color[2]));
+                m_shader_3_3->set_vec3("ambient_color", glm::vec3(ambient_color[0], ambient_color[1], ambient_color[2]));
+                m_shader_3_3->set_vec3("diffuse_color", glm::vec3(diffuse_color[0], diffuse_color[1], diffuse_color[2]));
+                m_shader_3_3->set_vec3("specular_color", glm::vec3(specular_color[0], specular_color[1], specular_color[2]));
+                m_shader_3_3->set_float("ambient_factor", ambient_factor);
+                m_shader_3_3->set_float("diffuse_factor", diffuse_factor);
+                m_shader_3_3->set_float("specular_factor", specular_factor);
+                m_shader_3_3->set_float("shininess", shininess);
+                m_shader_3_3->set_vec3("attenuation", glm::vec3(attenuation[0], attenuation[1], attenuation[2]));
+                m_shader_3_3->set_float("cutOff", cutOff);
+                m_shader_3_3->set_float("outerCutOff", outerCutOff);
+
+                glm::vec3 cube_pos = m_studing_cube_3->get_translate();
+                glm::vec3 cube_scale = m_studing_cube_3->get_scale();
+
+                m_shader_3_3->set_vec3("ambient_color", glm::vec3(light_color[0], light_color[1], light_color[2]));
+                m_shader_3_3->set_vec3("diffuse_color", glm::vec3(light_color[0], light_color[1], light_color[2]));
+                m_shader_3_3->set_vec3("specular_color", glm::vec3(light_color[0], light_color[1], light_color[2]));
+                m_studing_cube_3->set_translate(light_pos[0], light_pos[1], light_pos[2]);
+                m_studing_cube_3->set_scale(0.2, 0.2, 0.2);
+                m_renderer->render_cube_mesh_3(*camera, m_studing_cube_3);
+
+                m_shader_3_3->bind();
+                m_shader_3_3->set_vec3("ambient_color", glm::vec3(ambient_color[0], ambient_color[1], ambient_color[2]));
+                m_shader_3_3->set_vec3("diffuse_color", glm::vec3(diffuse_color[0], diffuse_color[1], diffuse_color[2]));
+                m_shader_3_3->set_vec3("specular_color", glm::vec3(specular_color[0], specular_color[1], specular_color[2]));
+                m_studing_cube_3->set_translate(cube_pos[0], cube_pos[1], cube_pos[2]);
+                m_studing_cube_3->set_scale(cube_scale[0], cube_scale[1], cube_scale[2]);
+                m_renderer->render_cube_mesh_3(*camera, m_studing_cube_3);
+
+                // m_shader_3_3->bind();
+                // m_renderer->render_cube_mesh_3(*camera, m_studing_cube_3);
+            }
+
+            // m_renderer->render_cube_mesh_3(*camera, m_studing_cube_3);
+        }
         // glm::vec3 center_of_cube = m_studing_cube->get_translate();
         // cout << "Нарисовали куб с центром в точке (" << center_of_cube[0] << ", " << center_of_cube[1] << ", " << center_of_cube[2] << ")." << std::endl;
     }
@@ -252,6 +421,67 @@ public:
             {
                 // camera->set_position(glm::vec3(camera_position[0], camera_position[1], camera_position[2]));
                 // m_studing_cube_2->set_rotation_axis_angle(cube_rotation_angle, cube_rotation_axis);
+            }
+        }
+
+        ImGui::Checkbox("Enable task 3", &checkbox_task_3);
+        if (checkbox_task_3)
+        {
+            ImGui::SliderFloat("Cube morphing factor", &uMorphFactor, 0.0f, 1.0f);
+
+            if (ImGui::SliderFloat3("cube position", cube_3_pos, -10.0f, 10.0f))
+                m_studing_cube_3->set_translate(cube_3_pos[0], cube_3_pos[1], cube_3_pos[2]);
+            if (ImGui::SliderFloat3("cube scaling", cube_3_scale, 0.0f, 10.0f))
+                m_studing_cube_3->set_scale(cube_3_scale[0], cube_3_scale[1], cube_3_scale[2]);
+            if (ImGui::SliderFloat3("cube rotation", cube_3_rotate, -360.0f, 360.0f))
+                m_studing_cube_3->set_rotate(cube_3_rotate[0], cube_3_rotate[1], cube_3_rotate[2]);
+
+            if (ImGui::RadioButton("point source light", light_type == 0)) { light_type = 0; }
+            if (ImGui::RadioButton("directional light", light_type == 1)) { light_type = 1; }
+            if (ImGui::RadioButton("spot light", light_type == 2)) { light_type = 2; }
+
+            if (light_type == 0)
+            {
+                ImGui::SliderFloat3("light pos", light_pos, -10.0f, 10.0f);
+                ImGui::ColorEdit3("light color", light_color);
+                ImGui::ColorEdit3("ambient color", ambient_color);
+                ImGui::ColorEdit3("diffuse color", diffuse_color);
+                ImGui::ColorEdit3("specular color", specular_color);
+                ImGui::SliderFloat("ambient_factor", &ambient_factor, 0.0f, 1.0f);
+                ImGui::SliderFloat("diffuse_factor", &diffuse_factor, 0.0f, 1.0f);
+                ImGui::SliderFloat("specular_factor", &specular_factor, 0.0f, 1.0f);
+                ImGui::SliderFloat("shininess", &shininess, 1.0f, 500.0f);
+                ImGui::SliderFloat3("attenuation", attenuation, 0.0f, 10.0f);
+            }
+
+            else if (light_type == 1)
+            {
+                ImGui::SliderFloat3("light direction", light_dir, -1.0f, 1.0f);
+                ImGui::ColorEdit3("light color", light_color);
+                ImGui::ColorEdit3("ambient color", ambient_color);
+                ImGui::ColorEdit3("diffuse color", diffuse_color);
+                ImGui::ColorEdit3("specular color", specular_color);
+                ImGui::SliderFloat("ambient_factor", &ambient_factor, 0.0f, 1.0f);
+                ImGui::SliderFloat("diffuse_factor", &diffuse_factor, 0.0f, 1.0f);
+                ImGui::SliderFloat("specular_factor", &specular_factor, 0.0f, 1.0f);
+                ImGui::SliderFloat("shininess", &shininess, 1.0f, 500.0f);
+            }
+
+            else if (light_type == 2)
+            {
+                ImGui::SliderFloat3("light pos", light_pos, -10.0f, 10.0f);
+                ImGui::SliderFloat3("light direction", light_dir, -1.0f, 1.0f);
+                ImGui::ColorEdit3("light color", light_color);
+                ImGui::ColorEdit3("ambient color", ambient_color);
+                ImGui::ColorEdit3("diffuse color", diffuse_color);
+                ImGui::ColorEdit3("specular color", specular_color);
+                ImGui::SliderFloat("ambient_factor", &ambient_factor, 0.0f, 1.0f);
+                ImGui::SliderFloat("diffuse_factor", &diffuse_factor, 0.0f, 1.0f);
+                ImGui::SliderFloat("specular_factor", &specular_factor, 0.0f, 1.0f);
+                ImGui::SliderFloat("shininess", &shininess, 1.0f, 500.0f);
+                ImGui::SliderFloat3("attenuation", attenuation, 0.0f, 10.0f);
+                ImGui::SliderFloat("cutOff", &cutOff, -1.0f, 1.0f);
+                ImGui::SliderFloat("outerCutOff", &outerCutOff, -1.0f, 1.0f);
             }
         }
 

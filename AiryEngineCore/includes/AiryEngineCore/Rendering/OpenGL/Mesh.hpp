@@ -57,6 +57,8 @@ namespace AiryEngine {
         void get_scale(float (&_scale)[3]) const;
         void get_rotate(float (&_rotate)[3]) const;
         void get_translate(float (&_translate)[3]) const;
+        glm::vec3 get_scale() const { return glm::vec3(scale[0], scale[1], scale[2]); } 
+        glm::vec3 get_translate() const { return glm::vec3(translate[0], translate[1], translate[2]); }
         // void get_scale(float* _scale);
         // void get_rotate(float& rotate_x, float& rotate_y, float& rotate_z);
         // void get_translate(float* _translate);

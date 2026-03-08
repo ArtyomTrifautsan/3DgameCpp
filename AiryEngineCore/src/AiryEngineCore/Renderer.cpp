@@ -57,6 +57,7 @@ namespace AiryEngine {
     {
         // LOG_INFO("Хотим прикрепить шейдер");
         m_shader = _shader;
+        // m_shader->bind();
         // LOG_INFO("Прикрепили");
     }
 
@@ -545,6 +546,51 @@ namespace AiryEngine {
         m_shader->set_float("uMorphFactor", uMorphFactor);
 
         send_cube_mesh_model_matrix_to_shader(mesh);
+        // Renderer_OpenGL::draw_vertex_elements_lines(*mesh->get_vertex_array());
+        Renderer_OpenGL::draw_vertex_elements(*mesh->get_vertex_array());
+
+        mesh->get_vertex_array()->unbind();
+        m_shader->unbind();
+    }
+
+    void Renderer::send_cube_mesh_model_matrix_to_shader_3(std::shared_ptr<CubeMesh> mesh)
+    {
+        /*
+        Этот метод отсылает не только model_matrix, но и normal_matrix.
+        Этот метод используется в задаче 3, с созданием освещения для морфированного куба
+        */
+
+        // Получаем параметры трансформации
+        float scale_arr[3], translate_arr[3];
+        mesh->get_scale(scale_arr);
+        mesh->get_translate(translate_arr);
+        glm::quat rotation = mesh->get_rotation();
+
+        // Формируем матрицу в порядке: Scale → Rotate → Translate
+        glm::mat4 model_matrix = glm::mat4(1.0f);
+        model_matrix = glm::translate(model_matrix, 
+            glm::vec3(translate_arr[0], translate_arr[1], translate_arr[2]));
+        model_matrix = model_matrix * glm::mat4_cast(rotation); // quat → mat4
+        model_matrix = glm::scale(model_matrix, 
+            glm::vec3(scale_arr[0], scale_arr[1], scale_arr[2]));
+
+        m_shader->set_matrix4("model_matrix", model_matrix);
+
+        m_shader->set_matrix3("normal_matrix", glm::transpose(glm::inverse(glm::mat3(model_matrix))));
+    }
+
+    void Renderer::render_cube_mesh_3(class Camera& camera, std::shared_ptr<CubeMesh> mesh)
+    {
+        // m_shader->bind();
+        mesh->get_vertex_array()->bind();
+
+        std::shared_ptr<Material> mesh_material = mesh->get_material();
+
+        m_shader->set_matrix4("view_projection_matrix", camera.get_view_projection_matrix());
+        // m_shader->set_vec3("color", mesh_material->diffuse_color);
+        // m_shader->set_float("uMorphFactor", uMorphFactor);
+
+        send_cube_mesh_model_matrix_to_shader_3(mesh);
         // Renderer_OpenGL::draw_vertex_elements_lines(*mesh->get_vertex_array());
         Renderer_OpenGL::draw_vertex_elements(*mesh->get_vertex_array());
 

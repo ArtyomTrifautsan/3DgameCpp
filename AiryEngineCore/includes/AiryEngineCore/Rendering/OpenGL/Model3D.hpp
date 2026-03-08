@@ -61,6 +61,8 @@ namespace AiryEngine {
 
     std::shared_ptr<CubeMesh> create_cube_mesh_from_points();
 
-    std::shared_ptr<CubeMesh> create_cube_mesh_from_points_2();
+    std::shared_ptr<CubeMesh> create_cube_mesh_from_points_2(const int subdivisions = 4);
+
+    std::shared_ptr<CubeMesh> create_cube_mesh_from_points_3(const int subdivisions = 4);
 
 }
